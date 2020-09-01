@@ -49,7 +49,10 @@ public class SPARQLInstancesQueryHandler extends AbstractWorkerQueryHandler {
 		return queries;
 	}
 
-
+	@Override
+	public File createFileWithID(File rootFolder, String idPrefix) throws IOException {
+		return super.createFileWithID(rootFolder, idPrefix);
+	}
 
 	protected File[] generateQueryPerLine(String queryFileName, String idPrefix) {
 		File queryFile = new File(queryFileName);
