@@ -31,11 +31,7 @@ public class SPARQLInstancesQueryHandler extends AbstractWorkerQueryHandler {
 
 	protected static final String OUTPUT_ROOT_FOLDER = "queryInstances" + File.separator;
 
-	protected HashMap<String, Integer> type2IDcounter = new HashMap<String, Integer>();
 
-	protected QueryStatistics qs = new QueryStatistics();
-
-	protected File[] queryFiles;
 
 	/**
 	 * Default Constructor
@@ -99,18 +95,7 @@ public class SPARQLInstancesQueryHandler extends AbstractWorkerQueryHandler {
 		return new File[] {};
 	}
 
-	protected File createFileWithID(File rootFolder, String idPrefix) throws IOException {
-		// create a File with an ID
-		int id = 0;
-		if (type2IDcounter.containsKey(idPrefix)) {
-			id = type2IDcounter.get(idPrefix);
-		}
-		File out = new File(rootFolder.getAbsolutePath() + File.separator + idPrefix + id);
-		out.createNewFile();
-		id++;
-		type2IDcounter.put(idPrefix, id);
-		return out;
-	}
+
 
 	@Override
 	protected File[] generateUPDATE(String updatePath) {

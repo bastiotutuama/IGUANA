@@ -1,6 +1,7 @@
 package org.aksw.iguana.tp.query;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.CLIInputWorker;
 import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.CLIWorker;
 import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.SPARQLWorker;
 import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.UPDATEWorker;
+import org.aksw.iguana.tp.utils.QueryStatistics;
 
 /**
  * 
@@ -29,8 +31,12 @@ public abstract class AbstractWorkerQueryHandler implements QueryHandler{
 	private Map<String, File[]> mapping = new HashMap<String, File[]>();
 	private HashSet<String> sparqlKeys = new HashSet<String>();
 	private HashSet<String> updateKeys = new HashSet<String>();
-	private Collection<Worker> workers; 
-	
+	private Collection<Worker> workers;
+
+	protected HashMap<String, Integer> type2IDcounter = new HashMap<String, Integer>();
+	protected QueryStatistics qs = new QueryStatistics();
+	protected File[] queryFiles;
+
 	/**
 	 * 
 	 * @param workers
@@ -69,7 +75,20 @@ public abstract class AbstractWorkerQueryHandler implements QueryHandler{
 			}
 		}
 	}
-	
+
+	protected File createFileWithID(File rootFolder, String idPrefix) throws IOException {
+		// create a File with an ID
+		int id = 0;
+		if (type2IDcounter.containsKey(idPrefix)) {
+			id = type2IDcounter.get(idPrefix);
+		}
+		File out = new File(rootFolder.getAbsolutePath() + File.separator + idPrefix + id);
+		out.createNewFile();
+		id++;
+		type2IDcounter.put(idPrefix, id);
+		return out;
+	}
+
 	/**
 	 * This method will generate Language-Specific Queries given a file with queries.
 	 * 
