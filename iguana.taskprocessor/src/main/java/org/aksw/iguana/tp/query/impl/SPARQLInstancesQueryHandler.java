@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
  * @author f.conrads
  *
  */
-public class InstancesQueryHandler extends AbstractWorkerQueryHandler {
+public class SPARQLInstancesQueryHandler extends AbstractWorkerQueryHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(InstancesQueryHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SPARQLInstancesQueryHandler.class);
 
 	protected static final String OUTPUT_ROOT_FOLDER = "queryInstances" + File.separator;
 
@@ -42,12 +42,12 @@ public class InstancesQueryHandler extends AbstractWorkerQueryHandler {
 	 * 
 	 * @param workers Workers to consider queryFiles/updatePaths of
 	 */
-	public InstancesQueryHandler(LinkedList<Worker> workers) {
+	public SPARQLInstancesQueryHandler(LinkedList<Worker> workers) {
 		super(workers);
 	}
 
 	@Override
-	protected File[] generateSPARQL(String queryFileName) {
+	protected File[] generateSingleQueries(String queryFileName) {
 		File[] queries = generateQueryPerLine(queryFileName, "sparql");
 		this.queryFiles = queries;
 		return queries;

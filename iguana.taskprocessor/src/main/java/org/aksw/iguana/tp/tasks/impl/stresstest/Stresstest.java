@@ -20,7 +20,7 @@ import org.aksw.iguana.commons.constants.COMMON;
 import org.aksw.iguana.commons.numbers.NumberUtils;
 import org.aksw.iguana.tp.query.QueryHandler;
 import org.aksw.iguana.tp.query.QueryHandlerFactory;
-import org.aksw.iguana.tp.query.impl.InstancesQueryHandler;
+import org.aksw.iguana.tp.query.impl.SPARQLInstancesQueryHandler;
 import org.aksw.iguana.tp.tasks.AbstractTask;
 import org.aksw.iguana.tp.tasks.impl.stresstest.worker.AbstractWorker;
 import org.aksw.iguana.tp.tasks.impl.stresstest.worker.Worker;
@@ -254,7 +254,7 @@ public class Stresstest extends AbstractTask {
 		if(warmupWorkers.size()==0) {
 			return;
 		}
-		QueryHandler iqh = new InstancesQueryHandler(warmupWorkers);
+		QueryHandler iqh = new SPARQLInstancesQueryHandler(warmupWorkers);
 		iqh.generateQueries();
 		LOGGER.info("[TaskID: {{}}] will start {{}}ms warmup now.", taskID, warmupTimeMS);
 		executeWarmup(warmupWorkers);

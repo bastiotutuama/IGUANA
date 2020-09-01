@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
  * @author f.conrads
  *
  */
-public class PatternQueryHandler extends InstancesQueryHandler {
+public class SPARQLPatternQueryHandler extends SPARQLInstancesQueryHandler {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(PatternQueryHandler.class);
+			.getLogger(SPARQLPatternQueryHandler.class);
 	
 	private String service;
 
@@ -61,7 +61,7 @@ public class PatternQueryHandler extends InstancesQueryHandler {
 	 * @param workers 
 	 * @param service the sparql endpoint to derive the variable instances
 	 */
-	public PatternQueryHandler(LinkedList<Worker> workers, String service) {
+	public SPARQLPatternQueryHandler(LinkedList<Worker> workers, String service) {
 		super(workers);
 		this.service = service;
 	}
@@ -77,7 +77,7 @@ public class PatternQueryHandler extends InstancesQueryHandler {
 	 * @param service the sparql endpoint to derive the variable instances
 	 * @param limit the resitriction of query instances per query pattern as String 
 	 */
-	public PatternQueryHandler(LinkedList<Worker> workers, String service, String limit) {
+	public SPARQLPatternQueryHandler(LinkedList<Worker> workers, String service, String limit) {
 		this(workers, service, Long.parseLong(limit));
 	}
 	
@@ -92,7 +92,7 @@ public class PatternQueryHandler extends InstancesQueryHandler {
 	 * @param service the sparql endpoint to derive the variable instances
 	 * @param limit the resitriction of query instances per query pattern
 	 */
-	public PatternQueryHandler(LinkedList<Worker> workers, String service, Long limit) {
+	public SPARQLPatternQueryHandler(LinkedList<Worker> workers, String service, Long limit) {
 		super(workers);
 		this.service = service;
 		this.limit = limit;

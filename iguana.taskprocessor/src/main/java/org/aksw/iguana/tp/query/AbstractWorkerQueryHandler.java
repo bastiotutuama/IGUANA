@@ -57,7 +57,7 @@ public abstract class AbstractWorkerQueryHandler implements QueryHandler{
 	@Override
 	public void generateQueries() {
 		for(String sparqlKey : sparqlKeys) {
-			mapping.put(sparqlKey, generateSPARQL(sparqlKey));
+			mapping.put(sparqlKey, generateSingleQueries(sparqlKey));
 		}
 		for(String updateKey : updateKeys) {
 			mapping.put(updateKey, generateUPDATE(updateKey));
@@ -71,12 +71,12 @@ public abstract class AbstractWorkerQueryHandler implements QueryHandler{
 	}
 	
 	/**
-	 * This method will generate SPARQL Queries given a file with queries.
+	 * This method will generate Language-Specific Queries given a file with queries.
 	 * 
 	 * @param queryFileName The queries file
 	 * @return for each query in the file, a File representing the query
 	 */
-	protected abstract File[] generateSPARQL(String queryFileName) ;
+	protected abstract File[] generateSingleQueries(String queryFileName) ;
 
 	/**
 	 * This method will generate UPDATE Queries given a folder with files in which updates are stated.

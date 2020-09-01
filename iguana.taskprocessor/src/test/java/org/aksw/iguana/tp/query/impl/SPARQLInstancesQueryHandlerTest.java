@@ -19,7 +19,7 @@ import org.junit.Test;
  * @author f.conrads
  *
  */
-public class InstancesQueryHandlerTest {
+public class SPARQLInstancesQueryHandlerTest {
 
 	/**
 	 * Clean up the directory
@@ -37,7 +37,7 @@ public class InstancesQueryHandlerTest {
 	 */
 	@Test
 	public void testIdHandling() throws IOException {
-		InstancesQueryHandler handler = new InstancesQueryHandler(new LinkedList<Worker>());
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
 		File tmpDir = new File("tmp");
 		tmpDir.mkdir();
 		File tmp = handler.createFileWithID(tmpDir, "test");
@@ -62,7 +62,7 @@ public class InstancesQueryHandlerTest {
 		UPDATEWorker  worker = new UPDATEWorker(new String[] {"1", "1", null, "",null,null,  null, 
 				"src/test/resources/queryhandler/updates/", "0", "0", "NONE","NONE"});
 		workers.add(worker);
-		InstancesQueryHandler handler = new InstancesQueryHandler(workers);
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(workers);
 		
 		handler.generateQueries();
 		File[] files = worker.getUpdateFiles();
@@ -83,15 +83,15 @@ public class InstancesQueryHandlerTest {
 	 */
 	@Test
 	public void checkCaching() {
-		InstancesQueryHandler handler = new InstancesQueryHandler(new LinkedList<Worker>());
-		File[] files = handler.generateSPARQL("src/test/resources/queryhandler/queries.sparql");
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
+		File[] files = handler.generateSingleQueries("src/test/resources/queryhandler/queries.sparql");
 		assertTrue(files.length==2);
 		File remove = files[0].getParentFile();
 		for(File f : files) {
 			f.delete();
 		}
-		InstancesQueryHandler handler2 = new InstancesQueryHandler(new LinkedList<Worker>());
-		files = handler2.generateSPARQL("src/test/resources/queryhandler/queries.sparql");
+		SPARQLInstancesQueryHandler handler2 = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
+		files = handler2.generateSingleQueries("src/test/resources/queryhandler/queries.sparql");
 		assertTrue(files.length==0);
 		remove.delete();
 	}
@@ -102,8 +102,8 @@ public class InstancesQueryHandlerTest {
 	 */
 	@Test
 	public void testSPARQL() throws IOException {
-		InstancesQueryHandler handler = new InstancesQueryHandler(new LinkedList<Worker>());
-		File[] files = handler.generateSPARQL("src/test/resources/queryhandler/queries.sparql");
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
+		File[] files = handler.generateSingleQueries("src/test/resources/queryhandler/queries.sparql");
 		
 		assertTrue(files.length==2);
 		File remove = new File(files[0].getParent());
@@ -125,7 +125,7 @@ public class InstancesQueryHandlerTest {
 	 */
 	@Test
 	public void testUPDATEAsPath() {
-		InstancesQueryHandler handler = new InstancesQueryHandler(new LinkedList<Worker>());
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
 		File[] files = handler.generateUPDATE("src/test/resources/queryhandler/updates");
 		List<String> names = new LinkedList<String>();
 		assertTrue(files.length == 3);
@@ -145,7 +145,7 @@ public class InstancesQueryHandlerTest {
 	 */
 	@Test
 	public void testUPDATEAsFile() throws IOException {
-		InstancesQueryHandler handler = new InstancesQueryHandler(new LinkedList<Worker>());
+		SPARQLInstancesQueryHandler handler = new SPARQLInstancesQueryHandler(new LinkedList<Worker>());
 		File[] files = handler.generateUPDATE("src/test/resources/queryhandler/updates.sparql");
 		assertTrue(files.length==2);
 		File remove = new File(files[0].getParent());

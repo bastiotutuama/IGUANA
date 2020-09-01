@@ -5,7 +5,7 @@ import org.aksw.iguana.tp.tasks.impl.stresstest.worker.Worker;
 import java.io.File;
 import java.util.LinkedList;
 
-public class BQLInstancesQueryHandler extends InstancesQueryHandler {
+public class BQLInstancesQueryHandler extends SPARQLInstancesQueryHandler {
 
     /**
      * Default Constructor
@@ -17,7 +17,7 @@ public class BQLInstancesQueryHandler extends InstancesQueryHandler {
     }
 
     @Override
-    protected File[] generateSPARQL(String queryFileName) {
+    protected File[] generateSingleQueries(String queryFileName) {
         File[] queries = generateQueryPerLine(queryFileName, "sparql");
         this.queryFiles = queries;
         return queries;

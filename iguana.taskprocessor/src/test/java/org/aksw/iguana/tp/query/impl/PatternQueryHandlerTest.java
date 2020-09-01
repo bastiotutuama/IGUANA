@@ -30,7 +30,7 @@ public class PatternQueryHandlerTest {
 	private String expectedQuery;
 	private String query;
 	private Set<String> varNames;
-	private PatternQueryHandler handler;
+	private SPARQLPatternQueryHandler handler;
 	
 	/**
 	 * @return Configurations to test
@@ -77,7 +77,7 @@ public class PatternQueryHandlerTest {
 		for(String var : varNames) {
 			this.varNames.add(var);
 		}
-		handler = new PatternQueryHandler(new LinkedList<Worker>(), "http://dbpedia.org/sparql", 3l);
+		handler = new SPARQLPatternQueryHandler(new LinkedList<Worker>(), "http://dbpedia.org/sparql", 3l);
 	}
 	
 	
