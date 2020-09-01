@@ -16,6 +16,9 @@ target
 .idea/*
 *.iml
 *.log
+iguana.corecontroller/.idea/*
+iguana.taskprocessor/.idea/*
+
 
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -31,3 +34,5 @@ iguana.taskprocessor/bin/
 iguana.datagenerator/bin/
 iguana.webcontroller/bin/
 iguana.resultprocessor/bin/
+
+
