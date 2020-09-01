@@ -35,7 +35,7 @@ public class InstancesQueryHandler extends AbstractWorkerQueryHandler {
 
 	protected QueryStatistics qs = new QueryStatistics();
 
-	private File[] queryFiles;
+	protected File[] queryFiles;
 
 	/**
 	 * Default Constructor
@@ -52,6 +52,8 @@ public class InstancesQueryHandler extends AbstractWorkerQueryHandler {
 		this.queryFiles = queries;
 		return queries;
 	}
+
+
 
 	protected File[] generateQueryPerLine(String queryFileName, String idPrefix) {
 		File queryFile = new File(queryFileName);
