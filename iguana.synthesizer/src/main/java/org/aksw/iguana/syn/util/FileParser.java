@@ -63,6 +63,14 @@ public class FileParser {
         StmtIterator stmtIterator = model.listStatements();
         while (stmtIterator.hasNext()) {
             Statement jenaRdfStatement = stmtIterator.nextStatement();  // get next statement
+            //print Literal Datatype, if object is literal:
+            /**if (jenaRdfStatement.getObject().isLiteral()) {
+                System.out.println("Datatype");
+                System.out.println(jenaRdfStatement.getObject().asLiteral().getDatatype());
+                System.out.println("Lexical Form of Object");
+                System.out.println(jenaRdfStatement.getObject().asLiteral().getLexicalForm());
+                System.out.println();
+            }*/
             statementsFromFile.add(new RDFStatement(jenaRdfStatement)); // add jenaRdfStatement to Collection according to the Statement interface
         }
 
