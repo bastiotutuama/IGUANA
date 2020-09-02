@@ -11,6 +11,7 @@
   	<module>iguana.taskprocessor</module>
   	<module>iguana.corecontroller</module>
   	<module>iguana.resultprocessor</module>
+      <module>iguana.synthesizer</module>
   </modules>
 
 </project>
