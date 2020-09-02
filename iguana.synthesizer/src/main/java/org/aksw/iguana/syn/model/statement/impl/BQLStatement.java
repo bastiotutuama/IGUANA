@@ -1,7 +1,7 @@
-package org.aksw.iguana.syn.model.impl;
+package org.aksw.iguana.syn.model.statement.impl;
 
-import org.aksw.iguana.syn.model.AbstractStatement;
-import org.aksw.iguana.syn.model.Statement;
+import org.aksw.iguana.syn.model.statement.AbstractStatement;
+import org.aksw.iguana.syn.model.statement.Statement;
 
 public class BQLStatement extends AbstractStatement implements Statement {
 

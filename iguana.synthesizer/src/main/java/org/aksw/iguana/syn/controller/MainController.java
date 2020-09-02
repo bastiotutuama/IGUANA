@@ -1,6 +1,6 @@
 package org.aksw.iguana.syn.controller;
 
-import org.aksw.iguana.syn.model.Statement;
+import org.aksw.iguana.syn.model.statement.Statement;
 import org.aksw.iguana.syn.util.FileParser;
 
 import java.util.Collection;

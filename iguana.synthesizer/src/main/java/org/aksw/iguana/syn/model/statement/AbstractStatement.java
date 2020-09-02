@@ -1,4 +1,4 @@
-package org.aksw.iguana.syn.model;
+package org.aksw.iguana.syn.model.statement;
 
 public abstract class AbstractStatement implements Statement{
 

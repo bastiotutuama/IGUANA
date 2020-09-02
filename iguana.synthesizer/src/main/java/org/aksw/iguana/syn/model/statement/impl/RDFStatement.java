@@ -1,9 +1,9 @@
-package org.aksw.iguana.syn.model.impl;
+package org.aksw.iguana.syn.model.statement.impl;
 
-import org.aksw.iguana.syn.model.AbstractStatement;
+import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.apache.jena.rdf.model.Statement;
 
-public class RDFStatement extends AbstractStatement implements org.aksw.iguana.syn.model.Statement {
+public class RDFStatement extends AbstractStatement implements org.aksw.iguana.syn.model.statement.Statement {
 
     private Statement rdfStatment;
 

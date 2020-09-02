@@ -1,6 +1,6 @@
 package org.aksw.iguana.syn.util;
 
-import org.aksw.iguana.syn.model.impl.RDFStatement;
+import org.aksw.iguana.syn.model.statement.impl.RDFStatement;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -40,7 +40,7 @@ public class FileParser {
 
     private static String DEFAULT_BASE_URL = "https://example.com";
 
-    public static Collection<org.aksw.iguana.syn.model.Statement> readInStatementsFromFile(String inputFileUri, SupportedInputLanguage supportedInputLanguage){
+    public static Collection<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFileUri, SupportedInputLanguage supportedInputLanguage){
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
@@ -57,7 +57,7 @@ public class FileParser {
         // write it to standard out
         //model.write(System.out);
 
-        ArrayList<org.aksw.iguana.syn.model.Statement> statementsFromFile = new ArrayList<>();
+        ArrayList<org.aksw.iguana.syn.model.statement.Statement> statementsFromFile = new ArrayList<>();
 
         // list the statements in the Model
         StmtIterator stmtIterator = model.listStatements();
