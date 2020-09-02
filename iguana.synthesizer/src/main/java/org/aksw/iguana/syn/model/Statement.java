@@ -7,4 +7,6 @@ public interface Statement {
     public String getPredicate();
 
     public String getObject();
+
+    public String getCompleteStatement();
 }
