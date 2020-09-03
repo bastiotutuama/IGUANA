@@ -1,6 +1,6 @@
 package org.aksw.iguana.syn.util;
 
-import org.aksw.iguana.syn.model.statement.impl.RDFStatement;
+import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -9,7 +9,6 @@ import org.apache.jena.riot.RDFDataMgr;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class FileParser {
 
@@ -71,7 +70,7 @@ public class FileParser {
                 System.out.println(jenaRdfStatement.getObject().asLiteral().getLexicalForm());
                 System.out.println();
             }*/
-            statementsFromFile.add(new RDFStatement(jenaRdfStatement)); // add jenaRdfStatement to Collection according to the Statement interface
+            statementsFromFile.add(new RDFNtripleStatement(jenaRdfStatement)); // add jenaRdfStatement to Collection according to the Statement interface
         }
 
         return statementsFromFile;

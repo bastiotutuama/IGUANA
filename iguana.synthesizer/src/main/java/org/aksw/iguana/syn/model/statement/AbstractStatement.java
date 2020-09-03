@@ -9,7 +9,7 @@ public abstract class AbstractStatement implements Statement{
     }
 
     public enum StatementLanguageIdentifier {
-        RDF,
+        RDF_NTRIPLE,
         BQL_INSERT
     }
 
@@ -26,6 +26,7 @@ public abstract class AbstractStatement implements Statement{
         URI_PREDICATE_FULLSTOP,
         LITERAL_OPENING_BRACKET,
         LITERAL_CLOSING_BRACKET,
+        LITERAL_DATATYPE_DELIMETER,
         LITERAL_DATATYPE_SPECIFIER_TEXT,
         LITERAL_DATATYPE_SPECIFIER_INTEGER,
         LITERAL_DATATYPE_SPECIFIER_FLOAT,

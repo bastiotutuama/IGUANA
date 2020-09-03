@@ -3,7 +3,7 @@ package org.aksw.iguana.syn.model.statement.impl;
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.Statement;
 
-public class BQLStatement extends AbstractStatement implements Statement {
+public class BQLInsertStatement extends AbstractStatement implements Statement {
 
     private String subject;
     private String predicate;
@@ -37,6 +37,9 @@ public class BQLStatement extends AbstractStatement implements Statement {
             case LITERAL_CLOSING_BRACKET:
                 return "\"";
 
+            case LITERAL_DATATYPE_DELIMETER:
+                return "^^";
+
             case LITERAL_DATATYPE_SPECIFIER_BOOLEAN:
                 return "^^type:bool";
 
@@ -57,7 +60,7 @@ public class BQLStatement extends AbstractStatement implements Statement {
         }
     }
 
-    public BQLStatement(String subject, String predicate, String object) {
+    public BQLInsertStatement(String subject, String predicate, String object) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;
