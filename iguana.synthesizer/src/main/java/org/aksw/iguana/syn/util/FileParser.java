@@ -54,7 +54,7 @@ public class FileParser {
         model.read(inputStream, DEFAULT_BASE_URL, supportedInputLanguage.toString());
 
         // write it to standard out
-        //model.write(System.out);
+        //model.write(System.out, SupportedInputLanguage.N_TRIPLE.toString());
 
         ArrayList<org.aksw.iguana.syn.model.statement.Statement> statementsFromFile = new ArrayList<>();
 
@@ -62,8 +62,8 @@ public class FileParser {
         StmtIterator stmtIterator = model.listStatements();
         while (stmtIterator.hasNext()) {
             Statement jenaRdfStatement = stmtIterator.nextStatement();  // get next statement
-            //print Literal Datatype, if object is literal:
-            /**if (jenaRdfStatement.getObject().isLiteral()) {
+            /* //print Literal Datatype, if object is literal:
+            if (jenaRdfStatement.getObject().isLiteral()) {
                 System.out.println("Datatype");
                 System.out.println(jenaRdfStatement.getObject().asLiteral().getDatatype());
                 System.out.println("Lexical Form of Object");
