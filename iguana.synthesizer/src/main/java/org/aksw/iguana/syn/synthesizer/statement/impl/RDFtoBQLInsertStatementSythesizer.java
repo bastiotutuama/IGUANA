@@ -92,14 +92,32 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
 
             for (AbstractStatement.StatementControlSymbol currentStatementPartControlSymbolToSynthesize : currentStatementPartControlSymbolsToSynthesize) {
-                    /**Actual statement-part synthesization through character replace*/
+
+                String controlSymbolReplacementTarget = RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
+                String controlSymbolReplacementSource = BQLInsertStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
+
+                /**Actual statement-part synthesization through character replace*/
+                synthesizedStatementParts.put(currentStatementPartIdentifier,
+                        synthesizedStatementParts.get(currentStatementPartIdentifier).replace(controlSymbolReplacementTarget, controlSymbolReplacementSource)
+                );
+
+            }
+
+            //Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL.
+            if (currentStatementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsLiteral()) {
+                //check if no control-symbol-mapping is present in Source-Statement-Dictionary
+                String rdfNtripleObjectDatatype = rdfNtripleStatement.getRdfStatment().getObject().asLiteral().getDatatypeURI();
+                if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(rdfNtripleObjectDatatype)) {
+                    //No Mapping exists in source-Statement-Dictionary -> No adequate mapping in target-Statement-Dictionary available => replace with BQL default Datatype-Identifer (type:text).
                     synthesizedStatementParts.put(currentStatementPartIdentifier,
                             synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
-                                    RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize),
-                                    BQLInsertStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize)
+                                    rdfNtripleObjectDatatype,
+                                    BQLInsertStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT)
                             )
                     );
+                }
             }
+
 
         }
 

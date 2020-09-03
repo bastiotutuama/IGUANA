@@ -77,6 +77,15 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
         }
     }
 
+    public static boolean doesStatementControlSymbolExistForString(String controlSymbolCandidate) {
+        for (AbstractStatement.StatementControlSymbol currentStatementControlSymbolAssociationToCheck: getStatemenControlSymbolIdentifiers()) {
+            if ( getStatementControlSymbol(currentStatementControlSymbolAssociationToCheck).equals(controlSymbolCandidate) ){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String getSubject() {
         return subject;
@@ -94,5 +103,9 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
 
     public boolean objectIsURINode () {
         return rdfStatment.getObject().isURIResource();
+    }
+
+    public boolean objectIsLiteral () {
+        return rdfStatment.getObject().isLiteral();
     }
 }

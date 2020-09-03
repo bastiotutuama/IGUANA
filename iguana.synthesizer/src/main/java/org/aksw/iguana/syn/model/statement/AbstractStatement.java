@@ -1,5 +1,8 @@
 package org.aksw.iguana.syn.model.statement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class AbstractStatement implements Statement{
 
     public enum StatementPartIdentifier {
@@ -34,7 +37,21 @@ public abstract class AbstractStatement implements Statement{
         LITERAL_DATATYPE_SPECIFIER_BLOB
     }
 
-   // public abstract String getStatementControlSymbol (StatementControlSymbol statementControlSymbol);
+
+
+    //TODO enable inhertance fo constrolSymbol Methods
+
+    public static List<StatementControlSymbol> getStatemenControlSymbolIdentifiers () {
+        return Arrays.asList(StatementControlSymbol.class.getEnumConstants());
+    }
+
+    //TODO enable inhertance fo constrolSymbol Methods
+
+    // public abstract String getStatementControlSymbol (StatementControlSymbol statementControlSymbol);
+
+    //TODO enable inhertance fo constrolSymbol Methods
+
+    // public abstract boolean doesStatementControlSymbolExistForString(String controlSymbolCandidate);
 
     public abstract String getSubject();
 
