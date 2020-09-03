@@ -13,14 +13,15 @@ public class MainController {
         ArrayList<Statement> fileStatements = FileParser.readInStatementsFromFile("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_small.nt", FileParser.SupportedInputLanguage.N_TRIPLE);
 
         for (Statement fileStatement : fileStatements) {
+            System.out.println("RDF-NTriple Statement");
             System.out.println(fileStatement.getCompleteStatement());
+            System.out.println();
+
+            System.out.println("Synthesized BQL-Insert Statement");
+            System.out.println(RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatement());
+            System.out.println();
         }
 
-        System.out.println(fileStatements.get(0).getCompleteStatement());
-
-        RDFNtripleStatement firstRdfNtripleStatement = (RDFNtripleStatement) fileStatements.get(0);
-        System.out.println("First RDF Statement Synthesization");
-        System.out.println(RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement(firstRdfNtripleStatement).getCompleteStatement());
     }
 
 }
