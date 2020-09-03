@@ -1,4 +1,4 @@
-package org.aksw.iguana.syn.synthesizer;
+package org.aksw.iguana.syn.synthesizer.statement;
 
 import org.aksw.iguana.syn.synthesizer.AbstractSynthesizerFactory;
 

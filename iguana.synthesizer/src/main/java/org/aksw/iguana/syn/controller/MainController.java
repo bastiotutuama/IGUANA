@@ -2,7 +2,7 @@ package org.aksw.iguana.syn.controller;
 
 import org.aksw.iguana.syn.model.statement.Statement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
-import org.aksw.iguana.syn.synthesizer.impl.RDFtoBQLInsertStatementSythesizer;
+import org.aksw.iguana.syn.synthesizer.statement.impl.RDFtoBQLInsertStatementSythesizer;
 import org.aksw.iguana.syn.util.FileParser;
 
 import java.util.ArrayList;

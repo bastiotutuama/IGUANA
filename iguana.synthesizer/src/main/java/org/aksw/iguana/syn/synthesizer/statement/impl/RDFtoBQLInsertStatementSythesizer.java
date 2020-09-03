@@ -1,4 +1,4 @@
-package org.aksw.iguana.syn.synthesizer.impl;
+package org.aksw.iguana.syn.synthesizer.statement.impl;
 
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.impl.BQLInsertStatement;
