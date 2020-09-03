@@ -58,11 +58,11 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
         statementControlSymbolsToSynthesize.put(AbstractStatement.StatementPartIdentifier.OBJECT,
                 new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
-                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_BLOB,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT,
                         AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_BOOLEAN,
                         AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_FLOAT,
-                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT,
                         AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_INTEGER,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_BLOB,
                         AbstractStatement.StatementControlSymbol.LITERAL_OPENING_BRACKET,
                         AbstractStatement.StatementControlSymbol.LITERAL_CLOSING_BRACKET
                 )
