@@ -40,7 +40,7 @@ public class FileParser {
 
     private static String DEFAULT_BASE_URL = "https://example.com";
 
-    public static Collection<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFileUri, SupportedInputLanguage supportedInputLanguage){
+    public static ArrayList<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFileUri, SupportedInputLanguage supportedInputLanguage){
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
