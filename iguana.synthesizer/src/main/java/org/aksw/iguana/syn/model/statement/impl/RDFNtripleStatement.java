@@ -91,4 +91,8 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
     public String getObject() {
         return object;
     }
+
+    public boolean objectIsURINode () {
+        return rdfStatment.getObject().isURIResource();
+    }
 }

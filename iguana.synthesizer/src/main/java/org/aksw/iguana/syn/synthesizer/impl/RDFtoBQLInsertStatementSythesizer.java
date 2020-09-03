@@ -79,19 +79,26 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
         for (AbstractStatement.StatementPartIdentifier currentStatementPartIdentifier: statementPartIdentifiersToIterateOver) {
 
+            ArrayList<AbstractStatement.StatementControlSymbol> currentStatementPartControlSymbolsToSynthesize;
+
             /** Synthesization of each statement-part: SUBJECT, PREDICATE, OBJECT*/
 
-            for (AbstractStatement.StatementControlSymbol currentSubjectStatementControlSymbolsToSynthesize :
-                    statementControlSymbolsToSynthesize.get(currentStatementPartIdentifier)) {
+            if (currentStatementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsURINode()) {
+                //If Object is URI-Node, use the SUBJECT-synthesization
+                currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(AbstractStatement.StatementPartIdentifier.SUBJECT);
+            } else {
+                currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(currentStatementPartIdentifier);
+            }
 
-                /**Actual statement-part synthesization through character replace*/
-                synthesizedStatementParts.put(currentStatementPartIdentifier,
-                        synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
-                                RDFNtripleStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize),
-                                BQLInsertStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize)
-                        )
-                );
 
+            for (AbstractStatement.StatementControlSymbol currentStatementPartControlSymbolToSynthesize : currentStatementPartControlSymbolsToSynthesize) {
+                    /**Actual statement-part synthesization through character replace*/
+                    synthesizedStatementParts.put(currentStatementPartIdentifier,
+                            synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
+                                    RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize),
+                                    BQLInsertStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize)
+                            )
+                    );
             }
 
         }
