@@ -2,6 +2,17 @@ package org.aksw.iguana.syn.model.statement;
 
 public abstract class AbstractStatement implements Statement{
 
+    public enum StatementPartIdentifier {
+        SUBJECT,
+        PREDICATE,
+        OBJECT
+    }
+
+    public enum StatementLanguageIdentifier {
+        RDF,
+        BQL_INSERT
+    }
+
     public enum StatementControlSymbol {
         URI_NODE_PROTOCOL_COLON,
         URI_NODE_SLASH,
@@ -22,7 +33,7 @@ public abstract class AbstractStatement implements Statement{
         LITERAL_DATATYPE_SPECIFIER_BLOB
     }
 
-    public abstract String getStatementControlSymbol (StatementControlSymbol statementControlSymbol);
+   // public abstract String getStatementControlSymbol (StatementControlSymbol statementControlSymbol);
 
     public abstract String getSubject();
 

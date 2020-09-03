@@ -1,8 +1,10 @@
 package org.aksw.iguana.syn.model.statement;
 
 public interface Statement {
-
-    public abstract String getStatementControlSymbol (AbstractStatement.StatementControlSymbol statementControlSymbol);
+    /*
+    public static String getStatementControlSymbol (AbstractStatement.StatementControlSymbol statementControlSymbol){
+        return null;
+    } */
 
     public String getSubject();
 

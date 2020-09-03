@@ -5,8 +5,11 @@ import org.aksw.iguana.syn.model.statement.Statement;
 
 public class BQLStatement extends AbstractStatement implements Statement {
 
-    @Override
-    public String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
+    private String subject;
+    private String predicate;
+    private String object;
+
+    public static String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
         switch (statementControlSymbol) {
             case URI_NODE_SLASH:
             case URI_PREDICATE_SLASH:
@@ -54,15 +57,24 @@ public class BQLStatement extends AbstractStatement implements Statement {
         }
     }
 
+    public BQLStatement(String subject, String predicate, String object) {
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
+    }
+
+    @Override
     public String getSubject() {
-        return null;
+        return subject;
     }
 
+    @Override
     public String getPredicate() {
-        return null;
+        return predicate;
     }
 
+    @Override
     public String getObject() {
-        return null;
+        return object;
     }
 }

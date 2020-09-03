@@ -15,8 +15,7 @@ public class RDFStatement extends AbstractStatement implements org.aksw.iguana.s
         return rdfStatment;
     }
 
-    @Override
-    public String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
+    public static String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
         switch (statementControlSymbol) {
             case URI_NODE_SLASH:
             case URI_PREDICATE_SLASH:
