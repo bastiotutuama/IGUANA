@@ -18,7 +18,7 @@ public class FileParser {
      */
     public enum SupportedInputLanguage{
 
-        nTriple("N-TRIPLE");
+        N_TRIPLE("N-TRIPLE");
 
         private final String jenaLangIdentifier;
 

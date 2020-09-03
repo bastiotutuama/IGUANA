@@ -15,6 +15,51 @@ public class RDFStatement extends AbstractStatement implements org.aksw.iguana.s
         return rdfStatment;
     }
 
+    @Override
+    public String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
+        switch (statementControlSymbol) {
+            case URI_NODE_SLASH:
+            case URI_PREDICATE_SLASH:
+                return "/";
+
+            case URI_NODE_FULLSTOP:
+            case URI_PREDICATE_FULLSTOP:
+                return ".";
+
+            case URI_NODE_PROTOCOL_COLON:
+            case URI_PREDICATE_PROTOCOL_COLON:
+                return ":";
+
+            case URI_NODE_OPENING_BRACKET:
+            case URI_PREDICATE_OPENING_BRACKET:
+                return "<";
+
+            case URI_NODE_CLOSING_BRACKET:
+            case URI_PREDICATE_CLOSING_BRACKET:
+                return ">";
+
+            case LITERAL_OPENING_BRACKET:
+            case LITERAL_CLOSING_BRACKET:
+                return "\"";
+
+            case LITERAL_DATATYPE_SPECIFIER_BOOLEAN:
+                return "^^<http://www.w3.org/2001/XMLSchema#boolean>";
+
+            case LITERAL_DATATYPE_SPECIFIER_FLOAT:
+                return "^^<http://www.w3.org/2001/XMLSchema#decimal>";
+
+            case LITERAL_DATATYPE_SPECIFIER_INTEGER:
+                return "^^<http://www.w3.org/2001/XMLSchema#integer>";
+
+            case LITERAL_DATATYPE_SPECIFIER_BLOB:
+            case LITERAL_DATATYPE_SPECIFIER_TEXT:
+                return "^^<http://www.w3.org/2001/XMLSchema#string>";
+
+            default:
+                return "";
+        }
+    }
+
     public String getSubject() {
         return rdfStatment.getSubject().toString();
     }
