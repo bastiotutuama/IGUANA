@@ -23,7 +23,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         return targetLanguage;
     }
 
-    public BQLStatement synthesizeBQLStatementFromRDFStatement(RDFStatement rdfStatement) {
+    public static BQLStatement synthesizeBQLStatementFromRDFStatement(RDFStatement rdfStatement) {
         //TODO: Better Abstraction in the Receivment of Control-Symbol characters according to Statement Class Instance
 
         HashMap<AbstractStatement.StatementPartIdentifier, String> synthesizedStatementParts = new HashMap<>();
