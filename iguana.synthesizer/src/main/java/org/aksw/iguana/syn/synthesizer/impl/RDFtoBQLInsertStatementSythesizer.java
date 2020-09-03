@@ -30,22 +30,43 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.SUBJECT, rdfNtripleStatement.getSubject());
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.PREDICATE, rdfNtripleStatement.getPredicate());
-        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, rdfNtripleStatement.getPredicate());
-
-        System.out.println("SUBJECT as RDF");
-        System.out.println(synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT));
+        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, rdfNtripleStatement.getObject());
 
         HashMap<AbstractStatement.StatementPartIdentifier, ArrayList<AbstractStatement.StatementControlSymbol>> statementControlSymbolsToSynthesize = new HashMap<>();
 
         statementControlSymbolsToSynthesize.put(AbstractStatement.StatementPartIdentifier.SUBJECT,
-                        new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
-                                AbstractStatement.StatementControlSymbol.URI_NODE_SLASH,
-                                AbstractStatement.StatementControlSymbol.URI_NODE_PROTOCOL_COLON,
-                                AbstractStatement.StatementControlSymbol.URI_NODE_FULLSTOP,
-                                AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET,
-                                AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET
-                            )
-                        )
+                new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
+                        AbstractStatement.StatementControlSymbol.URI_NODE_SLASH,
+                        AbstractStatement.StatementControlSymbol.URI_NODE_PROTOCOL_COLON,
+                        AbstractStatement.StatementControlSymbol.URI_NODE_FULLSTOP,
+                        AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET,
+                        AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET
+                    )
+                )
+        );
+
+        statementControlSymbolsToSynthesize.put(AbstractStatement.StatementPartIdentifier.PREDICATE,
+                new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
+                       AbstractStatement.StatementControlSymbol.URI_PREDICATE_SLASH,
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_PROTOCOL_COLON,
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_FULLSTOP,
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_OPENING_BRACKET,
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_CLOSING_BRACKET
+                    )
+                )
+        );
+
+        statementControlSymbolsToSynthesize.put(AbstractStatement.StatementPartIdentifier.OBJECT,
+                new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_BLOB,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_BOOLEAN,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_FLOAT,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT,
+                        AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_INTEGER,
+                        AbstractStatement.StatementControlSymbol.LITERAL_OPENING_BRACKET,
+                        AbstractStatement.StatementControlSymbol.LITERAL_CLOSING_BRACKET
+                )
+                )
         );
 
         ArrayList<AbstractStatement.StatementPartIdentifier> statementPartIdentifiersToIterateOver = new ArrayList<>(
@@ -56,24 +77,24 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         );
 
 
+        for (AbstractStatement.StatementPartIdentifier currentStatementPartIdentifier: statementPartIdentifiersToIterateOver) {
 
-        /** Synthesisation of SUBJECT Symbols*/
-        for (AbstractStatement.StatementControlSymbol currentSubjectStatementControlSymbolsToSynthesize :
-                statementControlSymbolsToSynthesize.get(AbstractStatement.StatementPartIdentifier.SUBJECT)) {
+            /** Synthesization of each statement-part: SUBJECT, PREDICATE, OBJECT*/
 
-                /**Actual Synthesization through character replace*/
-                synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.SUBJECT,
-                        synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT).replace(
-                            RDFNtripleStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize),
-                            BQLInsertStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize)
+            for (AbstractStatement.StatementControlSymbol currentSubjectStatementControlSymbolsToSynthesize :
+                    statementControlSymbolsToSynthesize.get(currentStatementPartIdentifier)) {
+
+                /**Actual statement-part synthesization through character replace*/
+                synthesizedStatementParts.put(currentStatementPartIdentifier,
+                        synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
+                                RDFNtripleStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize),
+                                BQLInsertStatement.getStatementControlSymbol(currentSubjectStatementControlSymbolsToSynthesize)
                         )
-                    );
+                );
+
+            }
 
         }
-
-        System.out.println("SUBJECT as synthesized BQL Insert");
-        System.out.println(synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT));
-
 
         return new BQLInsertStatement(
                 synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT),

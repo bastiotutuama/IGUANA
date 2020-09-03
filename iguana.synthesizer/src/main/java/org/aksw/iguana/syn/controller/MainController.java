@@ -20,8 +20,7 @@ public class MainController {
 
         RDFNtripleStatement firstRdfNtripleStatement = (RDFNtripleStatement) fileStatements.get(0);
         System.out.println("First RDF Statement Synthesization");
-        System.out.println(RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement(firstRdfNtripleStatement));
-        //System.out.println(fileStatements.toString());
+        System.out.println(RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement(firstRdfNtripleStatement).getCompleteStatement());
     }
 
 }
