@@ -63,4 +63,8 @@ public abstract class AbstractStatement implements Statement{
     public String getCompleteStatement() {
         return getSubject() + " " + getPredicate() + " " + getObject() + " .";
     }
+
+    public String getCompleteStatementWithoutFullStop() {
+        return getSubject() + " " + getPredicate() + " " + getObject();
+    }
 }

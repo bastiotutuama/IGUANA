@@ -1,6 +1,7 @@
 package org.aksw.iguana.syn.synthesizer.statement.impl;
 
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
+import org.aksw.iguana.syn.model.statement.Statement;
 import org.aksw.iguana.syn.model.statement.impl.BQLInsertStatement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
@@ -8,6 +9,7 @@ import org.aksw.iguana.syn.synthesizer.Synthesizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
@@ -134,4 +136,16 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         );
     }
 
+    public static ArrayList<String> generateBQLInsertStatementsFromRDFNtripleStatements(List<Statement> statements) {
+        ArrayList<String> outputStatements = new ArrayList<>();
+
+        for (Statement fileStatement : statements) {
+            String synthesizedBQLInsertStatement = RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
+            outputStatements.add("INSERT DATA INTO ?swdf {");
+            outputStatements.add(synthesizedBQLInsertStatement);
+            outputStatements.add("};");
+        }
+
+        return outputStatements;
+    }
 }
