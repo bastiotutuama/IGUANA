@@ -48,6 +48,14 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                         )
         );
 
+        ArrayList<AbstractStatement.StatementPartIdentifier> statementPartIdentifiersToIterateOver = new ArrayList<>(
+                Arrays.asList(
+                        AbstractStatement.StatementPartIdentifier.SUBJECT,
+                        AbstractStatement.StatementPartIdentifier.PREDICATE,
+                        AbstractStatement.StatementPartIdentifier.OBJECT)
+        );
+
+
 
         /** Synthesisation of SUBJECT Symbols*/
         for (AbstractStatement.StatementControlSymbol currentSubjectStatementControlSymbolsToSynthesize :
