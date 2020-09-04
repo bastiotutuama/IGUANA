@@ -101,12 +101,21 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
         return object;
     }
 
+
     public boolean objectIsURINode () {
         return rdfStatment.getObject().isURIResource();
     }
 
     public boolean objectIsLiteral () {
         return rdfStatment.getObject().isLiteral();
+    }
+
+    public String getLexicalFormOfObjectLiteral() {
+        if (objectIsLiteral()) {
+            return rdfStatment.getObject().asLiteral().getLexicalForm();
+        } else {
+            return "";
+        }
     }
 
     public String getObjectLiteralDatatypeURI () {
