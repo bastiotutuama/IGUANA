@@ -12,6 +12,7 @@
   	<module>iguana.corecontroller</module>
   	<module>iguana.resultprocessor</module>
       <module>iguana.synthesizer</module>
+      <module>iguana.dataimporter</module>
   </modules>
 
 </project>
