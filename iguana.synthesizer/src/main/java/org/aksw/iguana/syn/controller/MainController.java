@@ -6,6 +6,7 @@ import org.aksw.iguana.syn.synthesizer.statement.impl.RDFtoBQLInsertStatementSyt
 import org.aksw.iguana.syn.util.FileParser;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +49,13 @@ public class MainController {
         outputStatements.add("};");*/
 
         outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(0,25000));
+
+        StringWriter requestStringWriter = new StringWriter();
+        for (String bqlInsertStatement:outputStatements) {
+            requestStringWriter.append(bqlInsertStatement);
+        }
+        String allBqlInsertStatements = requestStringWriter.toString();
+
 
         Path outputFile = Paths.get("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_insert.bql");
         try {

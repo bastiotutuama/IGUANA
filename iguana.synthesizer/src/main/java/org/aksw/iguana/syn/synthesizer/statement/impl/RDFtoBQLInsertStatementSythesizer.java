@@ -38,7 +38,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         String escapedObjectOntent = replaceIllegalBQLStatemtentLiteralCharactersInObjectLiteralContent(rdfNtripleStatement);
         boolean wasEqualAfterAscaping = intialObjectContent.equals(escapedObjectOntent);
         if (!wasEqualAfterAscaping) {
-            System.out.println("wasn't equal - before: " + intialObjectContent + " after: " + escapedObjectOntent );
+            //System.out.println("wasn't equal - before: " + intialObjectContent + " after: " + escapedObjectOntent );
         }
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, escapedObjectOntent);
 

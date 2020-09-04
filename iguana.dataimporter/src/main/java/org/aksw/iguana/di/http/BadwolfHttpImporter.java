@@ -39,7 +39,7 @@ public class BadwolfHttpImporter {
     }
 
     public static void main(String[] args) {
-        sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", "SHOW GRAPHS;");
+        sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", "SELECT ?s, ?p, ?o FROM ?swdf WHERE {?s ?p ?o};");
     }
 
 }
