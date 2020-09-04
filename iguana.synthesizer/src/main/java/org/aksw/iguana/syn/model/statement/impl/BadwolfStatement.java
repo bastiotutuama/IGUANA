@@ -3,7 +3,7 @@ package org.aksw.iguana.syn.model.statement.impl;
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.Statement;
 
-public class BQLInsertStatement extends AbstractStatement implements Statement {
+public class BadwolfStatement extends AbstractStatement implements Statement {
 
     private String subject;
     private String predicate;
@@ -97,7 +97,7 @@ public class BQLInsertStatement extends AbstractStatement implements Statement {
         }
     }
 
-    public BQLInsertStatement(String subject, String predicate, String object) {
+    public BadwolfStatement(String subject, String predicate, String object) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;

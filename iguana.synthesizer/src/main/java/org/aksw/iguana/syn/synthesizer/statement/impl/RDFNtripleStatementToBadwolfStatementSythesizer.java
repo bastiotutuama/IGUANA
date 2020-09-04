@@ -2,7 +2,7 @@ package org.aksw.iguana.syn.synthesizer.statement.impl;
 
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.Statement;
-import org.aksw.iguana.syn.model.statement.impl.BQLInsertStatement;
+import org.aksw.iguana.syn.model.statement.impl.BadwolfStatement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
 
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
+public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesizer {
 
     private final AbstractStatement.StatementLanguageIdentifier sourceLanguage = AbstractStatement.StatementLanguageIdentifier.RDF_NTRIPLE;
     private final AbstractStatement.StatementLanguageIdentifier targetLanguage = AbstractStatement.StatementLanguageIdentifier.BQL_INSERT;
@@ -25,7 +25,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         return targetLanguage;
     }
 
-    public static BQLInsertStatement synthesizeBQLStatementFromRDFStatement(RDFNtripleStatement rdfNtripleStatement) {
+    public static BadwolfStatement synthesizeBQLStatementFromRDFStatement(RDFNtripleStatement rdfNtripleStatement) {
         //TODO: Better Abstraction in the Receivment of Control-Symbol characters according to Statement Class Instance
 
         HashMap<AbstractStatement.StatementPartIdentifier, String> synthesizedStatementParts = new HashMap<>();
@@ -107,7 +107,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
             for (AbstractStatement.StatementControlSymbol currentStatementPartControlSymbolToSynthesize : currentStatementPartControlSymbolsToSynthesize) {
 
                 String controlSymbolReplacementTarget = RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
-                String controlSymbolReplacementSource = BQLInsertStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
+                String controlSymbolReplacementSource = BadwolfStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
 
                 /*Actual statement-part synthesization through character replace*/
                 synthesizedStatementParts.put(currentStatementPartIdentifier,
@@ -127,7 +127,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                     synthesizedStatementParts.put(currentStatementPartIdentifier,
                             synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
                                     completeRdfNtripleDatatypeAssertion,
-                                    BQLInsertStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT)
+                                    BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT)
                             )
                     );
                 }
@@ -138,7 +138,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
         }
 
-        return new BQLInsertStatement(
+        return new BadwolfStatement(
                 synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT),
                 synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.PREDICATE),
                 synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.OBJECT)
@@ -152,23 +152,23 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
      */
     public static String replaceIllegalBQLStatemtentLiteralCharactersInObjectLiteralContent(RDFNtripleStatement rdfNtripleStatement){
         if(rdfNtripleStatement.objectIsLiteral()) {
-            ArrayList<BQLInsertStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
+            ArrayList<BadwolfStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
                     Arrays.asList(
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CR,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_LF,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CRLF,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_BACKSLASH
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CR,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_LF,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CRLF,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_BACKSLASH
                     )
             );
             String rdfObjectLiteralContent = rdfNtripleStatement.getLexicalFormOfObjectLiteral();
             String rdfObjectLiteralContentWithIllegalStatementResourceCharactersRemoved = rdfObjectLiteralContent + "";
-            for (BQLInsertStatement.IllegalStatementResourceCharacter currentIllegalLiteralResourceCharacter : illegalBQLLiteralResourceCharacters) {
+            for (BadwolfStatement.IllegalStatementResourceCharacter currentIllegalLiteralResourceCharacter : illegalBQLLiteralResourceCharacters) {
                 //replace all illegal Literal Character with substitute
                 rdfObjectLiteralContentWithIllegalStatementResourceCharactersRemoved = rdfObjectLiteralContentWithIllegalStatementResourceCharactersRemoved.replace(
                         currentIllegalLiteralResourceCharacter.getIllegalCharacterSequence(),
@@ -188,10 +188,9 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         ArrayList<String> bqlInsertQueries = new ArrayList<>();
 
         for (Statement fileStatement : rdfNtripleStatements) {
-            String synthesizedBQLInsertStatement = RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
+            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
             bqlInsertQueries.add("INSERT DATA INTO ?" + graphName + " {" + synthesizedBQLInsertStatement + "};");
         }
-
         return bqlInsertQueries;
     }
 }

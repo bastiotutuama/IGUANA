@@ -3,7 +3,7 @@ package org.aksw.iguana.syn.controller;
 import org.aksw.iguana.di.http.BadwolfHttpImporter;
 import org.aksw.iguana.syn.model.statement.Statement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
-import org.aksw.iguana.syn.synthesizer.statement.impl.RDFtoBQLInsertStatementSythesizer;
+import org.aksw.iguana.syn.synthesizer.statement.impl.RDFNtripleStatementToBadwolfStatementSythesizer;
 import org.aksw.iguana.syn.util.FileParser;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class MainController {
             //System.out.println("RDF-NTriple Statement");
             //System.out.println(fileStatement.getCompleteStatement());
 
-            String synthesizedBQLInsertStatement = RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) rdfNtripleStatement).getCompleteStatement();
+            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) rdfNtripleStatement).getCompleteStatement();
             //System.out.println("Synthesized BQL-Insert Statement");
             //System.out.println(synthesizedBQLInsertStatement);
 
@@ -55,7 +55,7 @@ public class MainController {
         ArrayList<String> currentBqlInsertQueriesChunk;
         int i = 0;
         while (i<rdfNtripleStatements.size()){
-            currentBqlInsertQueriesChunk = RDFtoBQLInsertStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements.subList(i, i + chunkSize - 1));
+            currentBqlInsertQueriesChunk = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements.subList(i, i + chunkSize - 1));
             sendBqlInsertQueryListToBqlEndpoint(endpointAdress,currentBqlInsertQueriesChunk);
             i+=chunkSize;
         }
