@@ -3,10 +3,17 @@ package org.aksw.iguana.di.http;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class BadwolfHttpImporter {
 
-    private static final OkHttpClient client = new OkHttpClient();
+
+    private static ConnectionPool pool = new ConnectionPool(5, 10000, TimeUnit.MILLISECONDS);
+
+
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectionPool(pool)
+            .build();
 
     public static void sendRequestToBadwolfEndpoint(String endpointAddress, String bqlQuery) {
         RequestBody formBody = new FormBody.Builder()
@@ -41,5 +48,11 @@ public class BadwolfHttpImporter {
     public static void main(String[] args) {
         sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", "SELECT ?s, ?p, ?o FROM ?swdf WHERE {?s ?p ?o};");
     }
+
+    public static void shutdownNetworkClient(){
+        client.dispatcher().executorService().shutdown();
+    }
+
+
 
 }

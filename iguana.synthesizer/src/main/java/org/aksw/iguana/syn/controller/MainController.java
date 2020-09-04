@@ -1,5 +1,6 @@
 package org.aksw.iguana.syn.controller;
 
+import org.aksw.iguana.di.http.BadwolfHttpImporter;
 import org.aksw.iguana.syn.model.statement.Statement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.aksw.iguana.syn.synthesizer.statement.impl.RDFtoBQLInsertStatementSythesizer;
@@ -17,7 +18,7 @@ public class MainController {
 
     public static void main(String [] args) {
         ArrayList<Statement> fileStatements = FileParser.readInStatementsFromFile("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8.nt", FileParser.SupportedInputLanguage.N_TRIPLE);
-        ArrayList<String> outputStatements = new ArrayList<>();
+        ArrayList<String> currentStatementChunks = new ArrayList<>();
 
         //TODO MEthod for Bulk.Insert Statement
         /*
@@ -48,22 +49,40 @@ public class MainController {
         outputStatements.set(outputStatements.size()-1, lastTripleWithouFullStop);
         outputStatements.add("};");*/
 
-        outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(0,25000));
+        //outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(0,750));
 
+        int chunkSize = 5;
+        int i = 0;
+        while (i<100000/*fileStatements.size()*/){
+            currentStatementChunks = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(i, i + chunkSize - 1));
+            sendStatementsToBqlEndpoint(currentStatementChunks);
+            i+=chunkSize;
+        }
+
+      //  BadwolfHttpImporter.shutdownNetworkClient();
+
+        /*
+        Path outputFile = Paths.get("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_insert.bql");
+        try {
+            //Files.write(outputFile, outputStatements, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
+
+    }
+
+    private static void sendStatementsToBqlEndpoint(ArrayList<String> statementList){
         StringWriter requestStringWriter = new StringWriter();
-        for (String bqlInsertStatement:outputStatements) {
+        for (String bqlInsertStatement:statementList) {
             requestStringWriter.append(bqlInsertStatement);
         }
         String allBqlInsertStatements = requestStringWriter.toString();
-
-
-        Path outputFile = Paths.get("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_insert.bql");
         try {
-            Files.write(outputFile, outputStatements, StandardCharsets.UTF_8);
+            requestStringWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        BadwolfHttpImporter.sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", allBqlInsertStatements);
     }
 
 }
