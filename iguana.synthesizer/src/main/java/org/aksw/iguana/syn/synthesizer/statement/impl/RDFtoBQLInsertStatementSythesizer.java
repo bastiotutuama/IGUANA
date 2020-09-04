@@ -38,7 +38,7 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         String escapedObjectOntent = replaceIllegalBQLStatemtentLiteralCharactersInObjectLiteralContent(rdfNtripleStatement);
         boolean wasEqualAfterAscaping = intialObjectContent.equals(escapedObjectOntent);
         if (!wasEqualAfterAscaping) {
-            System.out.println("wasn't equal - before: " + intialObjectContent + "after: " + escapedObjectOntent );
+            System.out.println("wasn't equal - before: " + intialObjectContent + " after: " + escapedObjectOntent );
         }
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, escapedObjectOntent);
 
@@ -153,11 +153,15 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
             ArrayList<BQLInsertStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
                     Arrays.asList(
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
+                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS
+                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS,
+                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CR,
+                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_LF,
+                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CRLF,
+                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_BACKSLASH
                     )
             );
             String rdfObjectLiteralContent = rdfNtripleStatement.getLexicalFormOfObjectLiteral();

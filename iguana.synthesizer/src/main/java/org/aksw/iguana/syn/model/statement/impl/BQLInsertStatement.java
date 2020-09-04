@@ -18,7 +18,12 @@ public class BQLInsertStatement extends AbstractStatement implements Statement {
         ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET(">", ")"),
         ILLEGAL_LITERAL_SLASH("/", "|"),
         ILLEGAL_LITERAL_COLON(":", "="),
-        ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS("@[]", "(at)");
+        ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS("@[]", "(at)"),
+        ILLEGAL_LITERAL_CR("\r", ""),
+        ILLEGAL_LITERAL_LF("\n", ""),
+        ILLEGAL_LITERAL_CRLF("\r\n", ""),
+        ILLEGAL_LITERAL_BACKSLASH("\\", "");
+
 
         private String illegalCharacterSequence;
         private String characterSequenceSubstitue;
