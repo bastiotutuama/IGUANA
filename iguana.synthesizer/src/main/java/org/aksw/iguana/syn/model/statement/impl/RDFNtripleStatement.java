@@ -108,4 +108,23 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
     public boolean objectIsLiteral () {
         return rdfStatment.getObject().isLiteral();
     }
+
+    public String getObjectLiteralDatatypeURI () {
+        if (objectIsLiteral()) {
+            return this.rdfStatment.getObject().asLiteral().getDatatypeURI();
+        } else {
+            return "";
+        }
+    }
+
+    public String getCompleteObjectLiteralDatatypeAssertion(){
+        if (this.objectIsLiteral()) {
+            return RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_DELIMETER) +
+                    RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET) +
+                    getObjectLiteralDatatypeURI() +
+                    RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
+        } else {
+            return "";
+        }
+    }
 }

@@ -131,14 +131,10 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
 
                 /* Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL. */
                 //check if no control-symbol-mapping is present in Source-Statement-Dictionary
-                String rdfNtripleObjectDatatype = rdfNtripleStatement.getRdfStatment().getObject().asLiteral().getDatatypeURI();
-                if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(rdfNtripleObjectDatatype)) {
+                String objectLiteralDatatypeURI = rdfNtripleStatement.getObjectLiteralDatatypeURI();
+                if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(objectLiteralDatatypeURI)) {
                     //No Mapping exists in source-Statement-Dictionary -> No adequate mapping in target-Statement-Dictionary available => replace with BQL default Datatype-Identifer (type:text).
-                    String completeRdfNtripleDatatypeAssertion =
-                            RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_DELIMETER) +
-                            RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET) +
-                            rdfNtripleObjectDatatype +
-                            RDFNtripleStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
+                    String completeRdfNtripleDatatypeAssertion = rdfNtripleStatement.getCompleteObjectLiteralDatatypeAssertion();
 
                     synthesizedStatementParts.put(currentStatementPartIdentifier,
                             synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
