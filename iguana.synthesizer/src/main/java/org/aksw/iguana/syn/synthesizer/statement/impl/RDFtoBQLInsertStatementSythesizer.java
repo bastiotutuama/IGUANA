@@ -184,16 +184,14 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         }
     }
 
-    public static ArrayList<String> generateBQLInsertStatementsFromRDFNtripleStatements(List<Statement> statements) {
-        ArrayList<String> outputStatements = new ArrayList<>();
+    public static ArrayList<String> generateBQLInsertQueryFromRDFNtripleStatements(String graphName,List<Statement> rdfNtripleStatements) {
+        ArrayList<String> bqlInsertQueries = new ArrayList<>();
 
-        for (Statement fileStatement : statements) {
+        for (Statement fileStatement : rdfNtripleStatements) {
             String synthesizedBQLInsertStatement = RDFtoBQLInsertStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
-            outputStatements.add("INSERT DATA INTO ?swdf {");
-            outputStatements.add(synthesizedBQLInsertStatement);
-            outputStatements.add("};");
+            bqlInsertQueries.add("INSERT DATA INTO ?" + graphName + " {" + synthesizedBQLInsertStatement + "};");
         }
 
-        return outputStatements;
+        return bqlInsertQueries;
     }
 }

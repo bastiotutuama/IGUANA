@@ -39,15 +39,15 @@ public class FileParser {
 
     private static String DEFAULT_BASE_URL = "https://example.com";
 
-    public static ArrayList<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFileUri, SupportedInputLanguage supportedInputLanguage){
+    public static ArrayList<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFilePath, SupportedInputLanguage supportedInputLanguage){
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
         // use the RDFDataMgr to find the input file
-        InputStream inputStream = RDFDataMgr.open( inputFileUri );
+        InputStream inputStream = RDFDataMgr.open( inputFilePath );
         if (inputStream == null) {
             throw new IllegalArgumentException(
-                    "File: " + inputFileUri + " not found");
+                    "File: " + inputFilePath + " not found");
         }
 
         // read the RDF file given in the specified language
