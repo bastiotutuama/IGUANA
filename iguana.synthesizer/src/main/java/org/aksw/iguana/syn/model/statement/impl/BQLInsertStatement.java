@@ -3,9 +3,6 @@ package org.aksw.iguana.syn.model.statement.impl;
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.Statement;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class BQLInsertStatement extends AbstractStatement implements Statement {
 
     private String subject;
@@ -91,6 +88,9 @@ public class BQLInsertStatement extends AbstractStatement implements Statement {
 
             case LITERAL_DATATYPE_SPECIFIER_TEXT:
                 return "^^type:text";
+
+            case URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST:
+                return "§";
 
             default:
                 return "";

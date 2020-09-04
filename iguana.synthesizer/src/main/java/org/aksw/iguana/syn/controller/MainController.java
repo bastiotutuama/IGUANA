@@ -52,8 +52,8 @@ public class MainController {
         //outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(0,750));
 
         int chunkSize = 5;
-        int i = 0;
-        while (i<100000/*fileStatements.size()*/){
+        int i = 150000;
+        while (i<200000/*fileStatements.size()*/){
             currentStatementChunks = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(i, i + chunkSize - 1));
             sendStatementsToBqlEndpoint(currentStatementChunks);
             i+=chunkSize;

@@ -72,6 +72,9 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
             case LITERAL_DATATYPE_SPECIFIER_TEXT:
                 return "^^<http://www.w3.org/2001/XMLSchema#string>";
 
+            case URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST:
+                return "%";
+
             default:
                 return "";
         }

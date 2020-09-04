@@ -51,7 +51,8 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                         AbstractStatement.StatementControlSymbol.URI_NODE_PROTOCOL_COLON,
                         AbstractStatement.StatementControlSymbol.URI_NODE_FULLSTOP,
                         AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET,
-                        AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET
+                        AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET,
+                        AbstractStatement.StatementControlSymbol.URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST
                     )
                 )
         );
@@ -62,7 +63,8 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_PROTOCOL_COLON,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_FULLSTOP,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_OPENING_BRACKET,
-                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_CLOSING_BRACKET
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_CLOSING_BRACKET,
+                        AbstractStatement.StatementControlSymbol.URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST
                     )
                 )
         );

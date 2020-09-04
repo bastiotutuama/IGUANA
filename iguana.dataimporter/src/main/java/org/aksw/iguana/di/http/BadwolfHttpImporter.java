@@ -27,6 +27,12 @@ public class BadwolfHttpImporter {
 
         client.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
+                //retry failed once
+                try {
+                    call.execute();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 e.printStackTrace();
             }
 
