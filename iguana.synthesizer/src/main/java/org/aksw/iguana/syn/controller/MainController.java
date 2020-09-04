@@ -24,7 +24,8 @@ public class MainController {
         String outputFilePath = "/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.bql";
 
         ArrayList<Statement> rdfNtripleStatements = FileParser.readInStatementsFromFile(inputFilePath, FileParser.SupportedInputLanguage.N_TRIPLE);
-        synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, 5);
+        //synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, 5);
+        synthesizeRdfNtripleStatmentListToBqlAndWriteToFile(rdfNtripleStatements, outputFilePath);
     }
 
 

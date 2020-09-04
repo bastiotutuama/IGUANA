@@ -46,6 +46,7 @@ public class BadwolfHttpImporter {
                     }
 
                     System.out.println(responseBody.string());
+                    System.out.println();
                 }
             }
         });
