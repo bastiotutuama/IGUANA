@@ -98,15 +98,38 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                 String controlSymbolReplacementTarget = RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
                 String controlSymbolReplacementSource = BQLInsertStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
 
-                /**Actual statement-part synthesization through character replace*/
+                /*Actual statement-part synthesization through character replace*/
                 synthesizedStatementParts.put(currentStatementPartIdentifier,
                         synthesizedStatementParts.get(currentStatementPartIdentifier).replace(controlSymbolReplacementTarget, controlSymbolReplacementSource)
                 );
 
             }
 
-            //Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL.
             if (currentStatementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsLiteral()) {
+
+                /* Case-Handling for Synthesization of Literal Content with characters that are not allowed in BQL-Literals */
+                ArrayList<BQLInsertStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
+                        Arrays.asList(
+                                BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
+                                //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
+                                BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
+                                BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
+                                BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
+                                BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS
+                        )
+                );
+                for (BQLInsertStatement.IllegalStatementResourceCharacter currentIllegalLiteralResourceCharacter : illegalBQLLiteralResourceCharacters) {
+                    //replace all illegal Literal Character with substitute
+                    synthesizedStatementParts.put(currentStatementPartIdentifier,
+                            synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
+                                    currentIllegalLiteralResourceCharacter.getIllegalCharacterSequence(),
+                                    currentIllegalLiteralResourceCharacter.getCharacterSequenceSubstitue()
+                            )
+                    );
+                }
+
+
+                /* Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL. */
                 //check if no control-symbol-mapping is present in Source-Statement-Dictionary
                 String rdfNtripleObjectDatatype = rdfNtripleStatement.getRdfStatment().getObject().asLiteral().getDatatypeURI();
                 if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(rdfNtripleObjectDatatype)) {
@@ -124,6 +147,8 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
                             )
                     );
                 }
+
+
             }
 
 

@@ -3,11 +3,43 @@ package org.aksw.iguana.syn.model.statement.impl;
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.Statement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class BQLInsertStatement extends AbstractStatement implements Statement {
 
     private String subject;
     private String predicate;
     private String object;
+
+    public enum IllegalStatementResourceCharacter {
+        ILLEGAL_LITERAL_FULLSTOP(".", ","),
+        ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET("<", "("),
+        ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET(">", ")"),
+        ILLEGAL_LITERAL_SLASH("/", "|"),
+        ILLEGAL_LITERAL_COLON(":", "="),
+        ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS("@[]", "(at)");
+
+        private String illegalCharacterSequence;
+        private String characterSequenceSubstitue;
+
+        IllegalStatementResourceCharacter(String illegalCharacterSequence, String characterSequenceSubstitue) {
+            this.illegalCharacterSequence = illegalCharacterSequence;
+            this.characterSequenceSubstitue = characterSequenceSubstitue;
+        }
+
+        public String getIllegalCharacterSequence() {
+            return illegalCharacterSequence;
+        }
+
+        public String getCharacterSequenceSubstitue() {
+            return characterSequenceSubstitue;
+        }
+    }
+
+    /* public static List<IllegalStatementResourceCharacter> getIllegalStatementResourceCharacters () {
+        return Arrays.asList(IllegalStatementResourceCharacter.class.getEnumConstants());
+    } */
 
     public static String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
         switch (statementControlSymbol) {

@@ -47,7 +47,7 @@ public class MainController {
         outputStatements.set(outputStatements.size()-1, lastTripleWithouFullStop);
         outputStatements.add("};");*/
 
-        outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(5000,6000));
+        outputStatements = RDFtoBQLInsertStatementSythesizer.generateBQLInsertStatementsFromRDFNtripleStatements(fileStatements.subList(0,2000));
 
         Path outputFile = Paths.get("/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_insert.bql");
         try {
