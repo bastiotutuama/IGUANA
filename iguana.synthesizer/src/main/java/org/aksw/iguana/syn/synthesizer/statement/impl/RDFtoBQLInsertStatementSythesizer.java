@@ -154,11 +154,11 @@ public class RDFtoBQLInsertStatementSythesizer implements Synthesizer {
         if(rdfNtripleStatement.objectIsLiteral()) {
             ArrayList<BQLInsertStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
                     Arrays.asList(
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
+                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
                             //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
-                            BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
+                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
+                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
+                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CR,
                             BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_LF,
