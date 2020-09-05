@@ -60,6 +60,18 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
         if (sparqlQuery.getQueryType() == Query.Type.UNKNOWN)
             return false;
 
+        if (sparqlQuery.queryPatternContainsFilterElement())
+            return false;
+
+        if (sparqlQuery.queryPatternContainsOptionalElement())
+            return false;
+
+        if (sparqlQuery.queryPatternContainsUnionElement())
+            return true;
+
+        if (sparqlQuery.queryPatternContainsNamedGraphElement())
+            return true;
+
         return true;
     }
 
