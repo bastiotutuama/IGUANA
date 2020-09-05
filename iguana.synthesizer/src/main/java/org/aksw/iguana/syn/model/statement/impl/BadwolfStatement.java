@@ -20,7 +20,8 @@ public class BadwolfStatement extends AbstractStatement implements Statement {
         ILLEGAL_LITERAL_LF("\n", ""),
         ILLEGAL_LITERAL_CRLF("\r\n", ""),
         ILLEGAL_LITERAL_BACKSLASH("\\", ""),
-        ILLEGAL_LITERAL_DATAYPE_DELIMETER("^^", "");
+        ILLEGAL_LITERAL_DATAYPE_DELIMETER("^^", ""),
+        ILLEGAL_LITERAL_DOUBLE_QUOTES("\"", "'");
 
 
         private String illegalCharacterSequence;
