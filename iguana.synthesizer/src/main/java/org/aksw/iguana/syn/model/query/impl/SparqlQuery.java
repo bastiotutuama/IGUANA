@@ -59,36 +59,20 @@ public class SparqlQuery extends AbstractQuery implements Query {
     }
 
     public boolean queryPatternContainsOptionalElement(){
-        for (Element currentQueryPatternElement:getJenaQueryPatternElements()) {
-            if (currentQueryPatternElement instanceof ElementOptional)
-                return true;
-        }
-        return false;
+       return checkJenaQueryPatternElementsForSpecificElement(ElementOptional.class);
     }
 
     public boolean queryPatternContainsUnionElement(){
-        for (Element currentQueryPatternElement:getJenaQueryPatternElements()) {
-            if (currentQueryPatternElement instanceof ElementUnion)
-                return true;
-        }
-        return false;
+        return checkJenaQueryPatternElementsForSpecificElement(ElementUnion.class);
     }
 
     public boolean queryPatternContainsFilterElement(){
-        for (Element currentQueryPatternElement:getJenaQueryPatternElements()) {
-            if (currentQueryPatternElement instanceof ElementFilter)
-                return true;
-        }
-        return false;
+        return checkJenaQueryPatternElementsForSpecificElement(ElementFilter.class);
     }
 
     //TO REVIEW
     public boolean queryPatternContainsNamedGraphElement(){
-        for (Element currentQueryPatternElement:getJenaQueryPatternElements()) {
-            if (currentQueryPatternElement instanceof ElementFilter)
-                return true;
-        }
-        return false;
+        return checkJenaQueryPatternElementsForSpecificElement(ElementNamedGraph.class);
     }
 
 
