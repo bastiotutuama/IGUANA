@@ -3,6 +3,7 @@ package org.aksw.iguana.syn.model.query.impl;
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
 import org.apache.jena.*;
+import org.apache.jena.query.Syntax;
 
 public class SparqlQuery extends AbstractQuery implements Query {
 
@@ -34,6 +35,8 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return Language.SPARQL;
     }
 
-
-
+    @Override
+    public String getQueryAsString() {
+        return jenaSparqlQuery.toString(Syntax.syntaxSPARQL_11);
+    }
 }

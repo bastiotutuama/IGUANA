@@ -15,5 +15,8 @@ public interface Query {
 
     public Language getLanguage();
 
+    public Type getQueryType();
+
+    public String getQueryAsString();
 
 }
