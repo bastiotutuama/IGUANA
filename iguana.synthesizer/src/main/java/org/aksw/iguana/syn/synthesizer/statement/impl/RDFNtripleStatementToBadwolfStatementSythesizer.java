@@ -154,11 +154,11 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
         if(rdfNtripleStatement.objectIsLiteral()) {
             ArrayList<BadwolfStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
                     Arrays.asList(
-                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
-                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
-                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
-                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
-                            //BQLInsertStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_FULLSTOP,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_COLON,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SLASH,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_OPEN_ANGLE_BRACKET,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CLOSED_ANGLE_BRACKET,
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_AT_FOLLOWING_BRACKETS,
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CR,
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_LF,
