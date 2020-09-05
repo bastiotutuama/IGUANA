@@ -10,7 +10,7 @@ public interface Query {
     public enum Type{
         SELECT,
         CONSTRUCT,
-        UNKNOWN
+        UNSUPPORTED
     }
 
     public Language getLanguage();

@@ -4,14 +4,12 @@ import org.aksw.iguana.syn.model.query.Query;
 import org.aksw.iguana.syn.model.query.impl.SparqlQuery;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
 import org.apache.jena.query.QueryFactory;
-import org.apache.jena.sparql.syntax.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
@@ -34,30 +32,33 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             e.printStackTrace();
         }
 
+        ArrayList<SparqlQuery> allSynthesizableSparqlQueries = new ArrayList<>();
 
         for (String currentSparqlQueryFromFileAsString:sparqlQueriesFromFileAsString) {
             org.apache.jena.query.Query jenaSparqlQueryFromFile = QueryFactory.create(currentSparqlQueryFromFileAsString);
             //System.out.println(jenaSparqlQueryFromFile.serialize(Syntax.syntaxSPARQL));
-            SparqlQuery sparqlQueryFromFile = new SparqlQuery(jenaSparqlQueryFromFile);
 
+            SparqlQuery sparqlQueryFromFile = null;
+            if (jenaSparqlQueryFromFile != null && jenaSparqlQueryTypeIsSupported(jenaSparqlQueryFromFile)){
+                    sparqlQueryFromFile = new SparqlQuery(jenaSparqlQueryFromFile);
+            }
 
-            if (sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
-                ElementGroup queryPatternElementGroup =  (ElementGroup) jenaSparqlQueryFromFile.getQueryPattern();
-                List<Element> queryPatternElements = queryPatternElementGroup.getElements();
-
-                System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
-
-                System.out.println(sparqlQueryFromFile);
+            if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
+                //System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
+                //System.out.println(sparqlQueryFromFile);
+                allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }
 
         }
 
+        System.out.println("Number of SPARQL Queries in File: " + sparqlQueriesFromFileAsString.size());
+        System.out.println("Number of thereof BQL-Synthesizable Queries: " + allSynthesizableSparqlQueries.size());
 
     }
 
     private static boolean sparqlQueryCanBeSynthesizedToBqlQuery(SparqlQuery sparqlQuery){
 
-        if (sparqlQuery.getQueryType() == Query.Type.UNKNOWN)
+        if (sparqlQuery.getQueryType() == Query.Type.UNSUPPORTED)
             return false;
 
         if (sparqlQuery.queryPatternContainsFilterElement())
@@ -73,6 +74,14 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             return true;
 
         return true;
+    }
+
+    private static boolean jenaSparqlQueryTypeIsSupported(org.apache.jena.query.Query jenaSparqlQuery){
+        for (int i = 0; i<SparqlQuery.getSupportedJenaQueryTypes().length; i++){
+            if ( SparqlQuery.getSupportedJenaQueryTypes()[i] == jenaSparqlQuery.queryType())
+                return true;
+        }
+        return false;
     }
 
 }
