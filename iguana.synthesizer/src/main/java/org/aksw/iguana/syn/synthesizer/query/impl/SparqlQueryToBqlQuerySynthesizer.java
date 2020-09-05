@@ -45,7 +45,7 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
 
             if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
                 //System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
-                //System.out.println(sparqlQueryFromFile);
+                System.out.println(sparqlQueryFromFile);
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }
 
@@ -68,10 +68,10 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             return false;
 
         if (sparqlQuery.queryPatternContainsUnionElement())
-            return true;
+            return false;
 
         if (sparqlQuery.queryPatternContainsNamedGraphElement())
-            return true;
+            return false;
 
         return true;
     }
