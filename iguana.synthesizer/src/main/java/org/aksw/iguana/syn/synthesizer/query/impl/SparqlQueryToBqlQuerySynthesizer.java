@@ -70,6 +70,7 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
         if (sparqlQuery.queryPatternContainsUnionElement())
             return false;
 
+        //TO REVIEW
         if (sparqlQuery.queryPatternContainsNamedGraphElement())
             return false;
 

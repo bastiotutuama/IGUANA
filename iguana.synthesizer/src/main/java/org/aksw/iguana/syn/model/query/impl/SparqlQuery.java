@@ -74,7 +74,6 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return checkJenaQueryPatternElementsForSpecificElement(ElementFilter.class);
     }
 
-    //TO REVIEW
     public boolean queryPatternContainsNamedGraphElement(){
         return checkJenaQueryPatternElementsForSpecificElement(ElementNamedGraph.class);
     }
