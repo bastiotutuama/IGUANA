@@ -11,4 +11,9 @@ public abstract class AbstractQuery implements Query {
     public void setQueryType(Type queryType) {
         this.queryType = queryType;
     }
+
+    @Override
+    public String toString() {
+        return getQueryAsString();
+    }
 }

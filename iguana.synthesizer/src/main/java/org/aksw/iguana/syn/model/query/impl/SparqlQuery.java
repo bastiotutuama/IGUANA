@@ -39,4 +39,6 @@ public class SparqlQuery extends AbstractQuery implements Query {
     public String getQueryAsString() {
         return jenaSparqlQuery.toString(Syntax.syntaxSPARQL_11);
     }
+
+
 }
