@@ -16,16 +16,32 @@ import java.util.ArrayList;
 
 public class MainController {
 
+    private static final String defaultOutputMethod = "endpoint";
+    private static final String defaultInputFilePath = "/home/otutuama/datasets/swdfu8.nt"; ///Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.nt
+    private static final String defaultGraphName = "swdf";
+    private static final String defaultEndpointAdress = "http://localhost:1234/bql"; //"http://131.234.29.241:1234/bql
+    private static final String defaultOutputFilePath = "/home/otutuama/datasets/swdfu8.bql"; //"/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.bql"
+    private static final int defaultChunkSize = 5;
+
+
     public static void main(String [] args) {
 
-        String inputFilePath = "/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.nt";
-        String graphName = "family";
-        String endpointAdress= "http://131.234.29.241:1234/bql";
-        String outputFilePath = "/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.bql";
+        String outputMethod = defaultOutputMethod;
+        String inputFilePath = defaultInputFilePath;
+        String graphName = defaultGraphName;
+        String endpointAdress= defaultEndpointAdress;
+        String outputFilePath = defaultOutputFilePath;
+        int chunkSize = defaultChunkSize;
 
         ArrayList<Statement> rdfNtripleStatements = FileParser.readInStatementsFromFile(inputFilePath, FileParser.SupportedInputLanguage.N_TRIPLE);
-        //synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, 5);
-        synthesizeRdfNtripleStatmentListToBqlAndWriteToFile(rdfNtripleStatements, outputFilePath);
+
+        if (outputMethod.equals("endpoint")) {
+            synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, chunkSize);
+        } else if (outputMethod.equals("file")) {
+            synthesizeRdfNtripleStatmentListToBqlAndWriteToFile(rdfNtripleStatements, outputFilePath);
+        } else {
+            System.out.println("Output-Method not recognized");
+        }
     }
 
 
