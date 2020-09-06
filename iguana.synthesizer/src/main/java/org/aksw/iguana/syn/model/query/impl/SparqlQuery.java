@@ -106,9 +106,19 @@ public class SparqlQuery extends AbstractQuery implements Query {
                     groupByClause.setClauseString(groupByClause.toString() + " - Implicit GROUP BY");
                 }
             }
-
             setQueryClauseForType(groupByClause);
-            System.out.println();
+        }
+
+        //HAVING CLAUSE
+        //TODO
+        //Not yet implemented as it is currently rarely found in Benchmark-SPARQL-Query-Sets
+
+        //LIMIT CLAUSE
+        if (jenaSparqlQuery.hasLimit()) {
+            SparqlQueryClause limitClause = new SparqlQueryClause(QueryClauseType.RESULT_LIMIT_CLAUSE, "LIMIT " + jenaSparqlQuery.getLimit());
+            limitClause.setClauseKeyword("LIMIT");
+            limitClause.setClauseSpecificationAmount(jenaSparqlQuery.getLimit());
+            setQueryClauseForType(limitClause);
         }
 
     }

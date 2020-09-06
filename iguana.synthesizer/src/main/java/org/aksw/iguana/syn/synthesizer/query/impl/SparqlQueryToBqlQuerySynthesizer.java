@@ -49,8 +49,6 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             }
 
             if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
-                //System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
-
                 System.out.println("------------------------------------------ " + "\n");
 
                 System.out.println(sparqlQueryFromFile);
@@ -61,11 +59,11 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
 
                 System.out.println("RESULT VARIABLES CLAUSE");
                 List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElements();
-                System.out.println("result variables: " + Arrays.toString(clauseVars.toArray()));
-                System.out.println("result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElementAggregatorExpressions() + "\n");
+                System.out.println("Result variables: " + Arrays.toString(clauseVars.toArray()));
+                System.out.println("Result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElementAggregatorExpressions() + "\n");
 
                 System.out.println("PATTERN CLAUSE");
-                System.out.println("triple paths:");
+                System.out.println("Triples:");
                 int i = 1;
                 for (String currentQueryPatternTriple:sparqlQueryFromFile.getQueryPatternTriples()) {
                     System.out.println(i + ": [" + currentQueryPatternTriple + "]");
@@ -84,6 +82,13 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
                     System.out.println("GROUP BY CLAUSE");
                     QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE);
                     System.out.println(((AbstractQueryClause) groupByClause).getClauseElements());
+                    System.out.println();
+                }
+
+                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE) != null) {
+                    System.out.println("LIMIT CLAUSE");
+                    QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE);
+                    System.out.println("Limit amount: " + ((AbstractQueryClause) groupByClause).getClauseSpecificationAmount());
                     System.out.println();
                 }
 

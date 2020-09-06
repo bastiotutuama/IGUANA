@@ -15,6 +15,7 @@ public abstract class AbstractQueryClause implements QueryClause{
     private Query.QueryClauseType queryClauseType;
     private String clauseKeyword;
     private String clauseString;
+    private long clauseSpecificationAmount;
     private ArrayList<String> clauseElements = new ArrayList<>();
     private Map<String, String> clauseElementAggregatorExpressions = new HashMap<>();
     private Map<String, SortOrder> clauseSortConditions = new HashMap<>();
@@ -46,6 +47,14 @@ public abstract class AbstractQueryClause implements QueryClause{
     @Override
     public void setClauseKeyword(String clauseKeyword) {
         this.clauseKeyword = clauseKeyword;
+    }
+
+    public long getClauseSpecificationAmount() {
+        return clauseSpecificationAmount;
+    }
+
+    public void setClauseSpecificationAmount(long clauseSpecificationAmount) {
+        this.clauseSpecificationAmount = clauseSpecificationAmount;
     }
 
     public void addToClauseElements(List<String> newClauseElement) {
