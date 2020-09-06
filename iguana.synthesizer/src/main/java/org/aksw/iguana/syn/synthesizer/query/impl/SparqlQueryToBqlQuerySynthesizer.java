@@ -48,13 +48,28 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
 
             if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
                 //System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
+
+                System.out.println("------------------------------------------ " + "\n");
+
                 System.out.println(sparqlQueryFromFile);
 
                 System.out.println("TYPE CLAUSE");
-                System.out.println("Keyword: " + sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE).getClauseKeyword());
-                List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE)).getClauseVariables();
+                System.out.println("Keyword: " + sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE).getClauseKeyword() + "\n");
+
+
+                System.out.println("RESULT VARIABLES CLAUSE");
+                List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElements();
                 System.out.println("result variables: " + Arrays.toString(clauseVars.toArray()));
-                System.out.println("result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE)).getClauseVariableAggregatorExpressions() + "\n");
+                System.out.println("result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElementAggregatorExpressions() + "\n");
+
+                System.out.println("PATTERN CLAUSE");
+                System.out.println("triple paths:");
+                int i = 1;
+                for (String currentQueryPatternTriple:sparqlQueryFromFile.getQueryPatternTriples()) {
+                    System.out.println(i + ": [" + currentQueryPatternTriple + "]");
+                    i++;
+                }
+                System.out.println();
 
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }

@@ -15,8 +15,8 @@ public abstract class AbstractQueryClause implements QueryClause{
     private Query.QueryClauseType queryClauseType;
     private String clauseKeyword;
     private String clauseString;
-    private ArrayList<String> clauseVariables = new ArrayList<>();
-    private Map<String, String> clauseVariableAggregatorExpressions = new HashMap<>();
+    private ArrayList<String> clauseElements = new ArrayList<>();
+    private Map<String, String> clauseElementAggregatorExpressions = new HashMap<>();
 
 
     public void setQueryClauseType(Query.QueryClauseType queryClauseType) {
@@ -48,23 +48,23 @@ public abstract class AbstractQueryClause implements QueryClause{
         this.clauseKeyword = clauseKeyword;
     }
 
-    public void addToClauseVariables(List<String> newClauseVariable) {
-        clauseVariables.addAll(newClauseVariable);
+    public void addToClauseElements(List<String> newClauseElement) {
+        clauseElements.addAll(newClauseElement);
     }
 
-    public void addToClauseVariables(String newClauseVariable){
-        clauseVariables.add(newClauseVariable);
+    public void addToClauseElements(String newClauseElement){
+        clauseElements.add(newClauseElement);
     }
 
-    public ArrayList<String> getClauseVariables() {
-        return clauseVariables;
+    public ArrayList<String> getClauseElements() {
+        return clauseElements;
     }
 
-    public Map<String, String> getClauseVariableAggregatorExpressions() {
-        return clauseVariableAggregatorExpressions;
+    public Map<String, String> getClauseElementAggregatorExpressions() {
+        return clauseElementAggregatorExpressions;
     }
 
-    public void addToClauseVariableAggregatorExpressions(String variable, String variableAggregatorExpression){
-        clauseVariableAggregatorExpressions.put(variable, variableAggregatorExpression);
+    public void addToClauseElementAggregatorExpressions(String variable, String elementAggregatorExpression){
+        clauseElementAggregatorExpressions.put(variable, elementAggregatorExpression);
     }
 }

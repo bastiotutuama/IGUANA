@@ -22,7 +22,7 @@ public abstract class AbstractQuery implements Query {
 
         ArrayList<QueryClauseType> queryClauseTypes = new ArrayList<>(Arrays.asList(
                 QueryClauseType.TYPE_CLAUSE,
-                QueryClauseType.VARIABLES_CLAUSE,
+                QueryClauseType.RESULT_VARIABLES_CLAUSE,
                 QueryClauseType.SOURCE_GRAPHS_CLAUSE,
                 QueryClauseType.DESTINATION_GRAPHS_CLAUSE,
                 QueryClauseType.PATTERN_CLAUSE,

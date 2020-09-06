@@ -17,7 +17,7 @@ public interface Query {
 
     public enum QueryClauseType {
         TYPE_CLAUSE,
-        VARIABLES_CLAUSE,
+        RESULT_VARIABLES_CLAUSE,
         SOURCE_GRAPHS_CLAUSE,
         DESTINATION_GRAPHS_CLAUSE,
         PATTERN_CLAUSE,

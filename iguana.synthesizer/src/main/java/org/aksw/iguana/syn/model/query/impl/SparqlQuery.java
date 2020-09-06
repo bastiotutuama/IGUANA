@@ -3,12 +3,15 @@ package org.aksw.iguana.syn.model.query.impl;
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
 import org.apache.jena.sparql.expr.aggregate.*;
 import org.apache.jena.sparql.syntax.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -16,8 +19,10 @@ import java.util.function.BiConsumer;
 public class SparqlQuery extends AbstractQuery implements Query {
 
     private org.apache.jena.query.Query jenaSparqlQuery;
-    private List<Element> jenaQueryPatternElements;
     private static org.apache.jena.query.QueryType[] supportedJenaQueryTypes = {org.apache.jena.query.QueryType.SELECT, org.apache.jena.query.QueryType.CONSTRUCT};
+    private List<Element> jenaQueryPatternElements;
+    private List<TriplePath> jenaQueryPatternTriplePaths = new ArrayList<>();
+    private List<String> queryPatternTriples = new ArrayList<>();
 
     public SparqlQuery(org.apache.jena.query.Query jenaSparqlQuery) {
 
@@ -39,21 +44,30 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 break;
         }
 
-        //Type Clause Extraction
+        //TYPE CLAUSE
         SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
         typeClause.setClauseKeyword(jenaSparqlQuery.queryType().toString());
-        typeClause.addToClauseVariables(jenaSparqlQuery.getResultVars());
+        setQueryClauseForType(typeClause);
+
+        //RESULT VARIABLES CLAUSE
+        String resultVariablesClauseString = ""; //TODO
+        SparqlQueryClause resultVariablesClause = new SparqlQueryClause(QueryClauseType.RESULT_VARIABLES_CLAUSE, resultVariablesClauseString);
+        resultVariablesClause.addToClauseElements(jenaSparqlQuery.getResultVars());
         jenaSparqlQuery.getProject().getExprs().forEach(new BiConsumer<Var, Expr>() {
             @Override
             public void accept(Var variable, Expr expression) {
                 if (expression instanceof ExprAggregator){
                     Aggregator aggregator = ((ExprAggregator) expression).getAggregator();
-                    typeClause.addToClauseVariableAggregatorExpressions(variable.getVarName(), aggregator.toString());
+                    resultVariablesClause.addToClauseElementAggregatorExpressions(variable.getVarName(), aggregator.toString());
                 }
             }
         });
-        //Type Clause addition
-        setQueryClauseForType(typeClause);
+        setQueryClauseForType(resultVariablesClause);
+
+        //PATTERN CLAUSE
+        fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
+        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriples().toArray()));
+        patternClause.addToClauseElements(getQueryPatternTriples());
 
     }
 
@@ -72,8 +86,54 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return supportedJenaQueryTypes;
     }
 
-    public List<Element> getJenaQueryPatternElements(){
+    private List<Element> getJenaQueryPatternElements(){
         return jenaQueryPatternElements;
+    }
+
+    private Collection<Expr> getJenaSparqlResultExpressionsList(){
+        return jenaSparqlQuery.getProject().getExprs().values();
+    }
+
+    private void fillQueryPatternTriplePathsFromJenaQueryPatternElements(List<Element> jenaQueryPatternElements){
+        for (Element currentJenaQueryPatternElementPathBlock:jenaQueryPatternElements) {
+            if (currentJenaQueryPatternElementPathBlock instanceof ElementPathBlock){
+                ElementPathBlock tripleElementPathBlock = (ElementPathBlock) currentJenaQueryPatternElementPathBlock;
+                List<TriplePath> currentTriplePaths = tripleElementPathBlock.getPattern().getList();
+                for (TriplePath currentTriplePath:currentTriplePaths) {
+                    addToJenaQuerryPatternTriplePathsAndTriples(currentTriplePath);
+                }
+            }
+        }
+    }
+
+    private void addToJenaQuerryPatternTriplePathsAndTriples(TriplePath triplePath){
+        jenaQueryPatternTriplePaths.add(triplePath);
+        StringBuilder currentTriple = new StringBuilder();
+        //Subject
+        if (triplePath.getSubject().isURI()) {
+            currentTriple.append("<" + triplePath.getSubject().toString() + ">");
+        } else {
+            currentTriple.append(triplePath.getSubject().toString());
+        }
+        currentTriple.append(" ");
+        //Predicate
+        if (triplePath.getPredicate().isURI()) {
+            currentTriple.append("<" + triplePath.getPredicate().toString() + ">");
+        } else {
+            currentTriple.append(triplePath.getPredicate().toString());
+        }
+        currentTriple.append(" ");
+        //Object
+        if (triplePath.getObject().isURI()) {
+            currentTriple.append("<" + triplePath.getObject().toString() + ">");
+        } else {
+            currentTriple.append(triplePath.getObject().toString());
+        }
+        queryPatternTriples.add(currentTriple.toString());
+    }
+
+    public List<String> getQueryPatternTriples() {
+        return queryPatternTriples;
     }
 
     private boolean checkJenaQueryPatternElementsForSpecificElement(Class specificQueryPatternElement){
@@ -98,10 +158,6 @@ public class SparqlQuery extends AbstractQuery implements Query {
 
     public boolean queryPatternContainsNamedGraphElement(){
         return checkJenaQueryPatternElementsForSpecificElement(ElementNamedGraph.class);
-    }
-
-    private Collection<Expr> getJenaSparqlResultExpressionsList(){
-        return jenaSparqlQuery.getProject().getExprs().values();
     }
 
     public boolean resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression(){
