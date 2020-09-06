@@ -32,16 +32,8 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
 
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.SUBJECT, rdfNtripleStatement.getSubject());
         synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.PREDICATE, rdfNtripleStatement.getPredicate());
-
         /* Case-Handling for Synthesization of Literal Content with characters that are not allowed in BQL-Literals */
-        String intialObjectContent = rdfNtripleStatement.getObject();
-        String escapedObjectOntent = replaceIllegalBQLStatemtentLiteralCharactersInObjectLiteralContent(rdfNtripleStatement);
-        boolean wasEqualAfterAscaping = intialObjectContent.equals(escapedObjectOntent);
-        if (!wasEqualAfterAscaping) {
-            //System.out.println("wasn't equal - before: " + intialObjectContent + " after: " + escapedObjectOntent );
-        }
-        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, escapedObjectOntent);
-
+        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, getObjectContentOfBQLStatemtentWithIllegalLiteralCharactersInObjectLiteralReplaced(rdfNtripleStatement));
 
         HashMap<AbstractStatement.StatementPartIdentifier, ArrayList<AbstractStatement.StatementControlSymbol>> statementControlSymbolsToSynthesize = new HashMap<>();
 
@@ -150,7 +142,7 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
      * @param rdfNtripleStatement
      * @return
      */
-    public static String replaceIllegalBQLStatemtentLiteralCharactersInObjectLiteralContent(RDFNtripleStatement rdfNtripleStatement){
+    public static String getObjectContentOfBQLStatemtentWithIllegalLiteralCharactersInObjectLiteralReplaced(RDFNtripleStatement rdfNtripleStatement){
         if(rdfNtripleStatement.objectIsLiteral()) {
             ArrayList<BadwolfStatement.IllegalStatementResourceCharacter> illegalBQLLiteralResourceCharacters = new ArrayList<>(
                     Arrays.asList(
