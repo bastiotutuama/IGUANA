@@ -99,7 +99,8 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
 
     private static boolean sparqlQueryCanBeSynthesizedToBqlQuery(SparqlQuery sparqlQuery){
 
-        if (sparqlQuery.getQueryType() == Query.QueryType.UNSUPPORTED)
+        //TODO Reactivate and implement CONSTRUCT-Query Synthesization, when adequate.
+        if (sparqlQuery.getQueryType() == Query.QueryType.UNSUPPORTED || sparqlQuery.getQueryType() == Query.QueryType.CONSTRUCT)
             return false;
 
         if (sparqlQuery.queryPatternContainsFilterElement())
