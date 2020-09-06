@@ -2,7 +2,9 @@ package org.aksw.iguana.syn.synthesizer.query.impl;
 
 import org.aksw.iguana.syn.model.query.AbstractQueryClause;
 import org.aksw.iguana.syn.model.query.Query;
+import org.aksw.iguana.syn.model.query.QueryClause;
 import org.aksw.iguana.syn.model.query.impl.SparqlQuery;
+import org.aksw.iguana.syn.model.query.impl.SparqlQueryClause;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
 import org.apache.jena.query.QueryFactory;
 
@@ -70,6 +72,13 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
                     i++;
                 }
                 System.out.println();
+
+                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE) != null) {
+                    System.out.println("ORDER BY CLAUSE");
+                    QueryClause orderByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE);
+                    System.out.println(((AbstractQueryClause) orderByClause).getClauseSortConditions());
+                    System.out.println();
+                }
 
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }

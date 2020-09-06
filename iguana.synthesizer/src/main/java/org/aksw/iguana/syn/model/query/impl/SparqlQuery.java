@@ -2,11 +2,14 @@ package org.aksw.iguana.syn.model.query.impl;
 
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
+import org.aksw.iguana.syn.model.query.QueryClause;
+import org.apache.jena.query.SortCondition;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.jena.sparql.expr.ExprVar;
 import org.apache.jena.sparql.expr.aggregate.*;
 import org.apache.jena.sparql.syntax.*;
 
@@ -68,6 +71,18 @@ public class SparqlQuery extends AbstractQuery implements Query {
         fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
         SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriples().toArray()));
         patternClause.addToClauseElements(getQueryPatternTriples());
+        setQueryClauseForType(patternClause);
+
+        //ORDER BY CLAUSE
+        if (jenaSparqlQuery.hasOrderBy() && orderByHasOnlySimpleDirectionExpressions()) {
+            String sortOrderValue = jenaSparqlQuery.getOrderBy().toString();
+            SparqlQueryClause orderByClause = new SparqlQueryClause(QueryClauseType.RESULTS_ORDER_CLAUSE, sortOrderValue);
+            for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
+                QueryClause.SortOrder currentConditionSortOrder = currentSortCondition.getDirection() == -1 ? QueryClause.SortOrder.DESC : QueryClause.SortOrder.ASC;
+                orderByClause.addToClauseSortConditions(currentSortCondition.getExpression().getVarName(), currentConditionSortOrder);
+            }
+            setQueryClauseForType(orderByClause);
+        }
 
     }
 
@@ -173,5 +188,14 @@ public class SparqlQuery extends AbstractQuery implements Query {
             }
         }
         return false;
+    }
+
+    public boolean orderByHasOnlySimpleDirectionExpressions(){
+        for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
+            if (!(currentSortCondition.getExpression() instanceof ExprVar)){
+                return false;
+            }
+        }
+        return true;
     }
 }

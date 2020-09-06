@@ -2,9 +2,9 @@ package org.aksw.iguana.syn.model.query;
 
 public interface QueryClause {
 
-    public Query.QueryClauseType getClauseType();
+    public enum SortOrder{ASC,DESC};
 
-    public String getClauseString();
+    public Query.QueryClauseType getClauseType();
 
     public void setClauseString(String clauseString);
 

@@ -17,7 +17,7 @@ public abstract class AbstractQueryClause implements QueryClause{
     private String clauseString;
     private ArrayList<String> clauseElements = new ArrayList<>();
     private Map<String, String> clauseElementAggregatorExpressions = new HashMap<>();
-
+    private Map<String, SortOrder> clauseSortConditions = new HashMap<>();
 
     public void setQueryClauseType(Query.QueryClauseType queryClauseType) {
         this.queryClauseType = queryClauseType;
@@ -29,7 +29,7 @@ public abstract class AbstractQueryClause implements QueryClause{
     }
 
     @Override
-    public String getClauseString() {
+    public String toString() {
         return clauseString;
     }
 
@@ -64,7 +64,15 @@ public abstract class AbstractQueryClause implements QueryClause{
         return clauseElementAggregatorExpressions;
     }
 
-    public void addToClauseElementAggregatorExpressions(String variable, String elementAggregatorExpression){
-        clauseElementAggregatorExpressions.put(variable, elementAggregatorExpression);
+    public void addToClauseElementAggregatorExpressions(String element, String elementAggregatorExpression){
+        clauseElementAggregatorExpressions.put(element, elementAggregatorExpression);
+    }
+
+    public void addToClauseSortConditions(String variable, SortOrder sortOrder){
+        clauseSortConditions.put(variable, sortOrder);
+    }
+
+    public Map<String, SortOrder> getClauseSortConditions() {
+        return clauseSortConditions;
     }
 }

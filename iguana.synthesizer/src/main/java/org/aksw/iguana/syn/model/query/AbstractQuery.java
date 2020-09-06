@@ -61,6 +61,9 @@ public abstract class AbstractQuery implements Query {
 
     @Override
     public QueryClause getQueryClauseForType(QueryClauseType queryClauseType) {
-        return this.queryClauses.get(queryClauseType);
+        if (this.queryClauses.containsKey(queryClauseType)){
+            return this.queryClauses.get(queryClauseType);
+        }
+        return null;
     }
 }
