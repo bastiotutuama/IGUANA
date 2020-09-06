@@ -25,7 +25,7 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
         return targetLanguage;
     }
 
-    public static BadwolfStatement synthesizeBQLStatementFromRDFStatement(RDFNtripleStatement rdfNtripleStatement) {
+    public static BadwolfStatement synthesizeBadwolfStatementFromRDFStatement(RDFNtripleStatement rdfNtripleStatement) {
         //TODO: Better Abstraction in the Receivment of Control-Symbol characters according to Statement Class Instance
 
         HashMap<AbstractStatement.StatementPartIdentifier, String> synthesizedStatementParts = new HashMap<>();
@@ -190,7 +190,7 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
         ArrayList<String> bqlInsertQueries = new ArrayList<>();
 
         for (Statement fileStatement : rdfNtripleStatements) {
-            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
+            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBadwolfStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
             bqlInsertQueries.add("INSERT DATA INTO ?" + graphName + " {" + synthesizedBQLInsertStatement + "};");
         }
         return bqlInsertQueries;

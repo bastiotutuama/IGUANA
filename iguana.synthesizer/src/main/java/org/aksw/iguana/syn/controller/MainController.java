@@ -23,6 +23,7 @@ public class MainController {
     private static final String defaultOutputFilePath = "/home/otutuama/datasets/swdfu8.bql"; //"/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.bql"
     private static final int defaultChunkSize = 5;
 
+    private static boolean debugOutPutEnabled = true;
 
     public static void main(String [] args) {
 
@@ -45,7 +46,7 @@ public class MainController {
         if (outputMethod.equals("endpoint")) {
             synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, chunkSize);
         } else if (outputMethod.equals("file")) {
-            synthesizeRdfNtripleStatmentListToBqlAndWriteToFile(rdfNtripleStatements, outputFilePath);
+            synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(rdfNtripleStatements, outputFilePath);
         } else {
             System.out.println("Output-Method not recognized");
         }
@@ -59,19 +60,24 @@ public class MainController {
         }
     }
 
-    private static void synthesizeRdfNtripleStatmentListToBqlAndWriteToFile(ArrayList<Statement> rdfNtripleStatements, String outputFilePath){
+    private static void synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(ArrayList<Statement> rdfNtripleStatements, String outputFilePath){
 
         ArrayList<String> outputStatements = new ArrayList<>();
         for (Statement rdfNtripleStatement : rdfNtripleStatements) {
 
-            //System.out.println("RDF-NTriple Statement");
-            //System.out.println(fileStatement.getCompleteStatement());
+            if (debugOutPutEnabled) {
+                System.out.println("RDF-NTriple Statement");
+                System.out.println(rdfNtripleStatement.getCompleteStatement() + "\n");
+            }
 
-            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBQLStatementFromRDFStatement((RDFNtripleStatement) rdfNtripleStatement).getCompleteStatement();
-            //System.out.println("Synthesized BQL-Insert Statement");
-            //System.out.println(synthesizedBQLInsertStatement);
+            String synthesizedBadwolfStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBadwolfStatementFromRDFStatement((RDFNtripleStatement) rdfNtripleStatement).getCompleteStatement();
 
-            outputStatements.add(synthesizedBQLInsertStatement);
+            if (debugOutPutEnabled) {
+                System.out.println("Synthesized Badwolf Statement");
+                System.out.println(synthesizedBadwolfStatement  + "\n");
+            }
+
+            outputStatements.add(synthesizedBadwolfStatement);
         }
 
         Path outputFile = Paths.get(outputFilePath);
