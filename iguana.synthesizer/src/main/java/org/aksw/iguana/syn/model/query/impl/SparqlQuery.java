@@ -2,11 +2,11 @@ package org.aksw.iguana.syn.model.query.impl;
 
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
-import org.aksw.iguana.syn.model.query.QueryClause;
 import org.apache.jena.query.Syntax;
+import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.syntax.*;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class SparqlQuery extends AbstractQuery implements Query {
@@ -35,7 +35,9 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 break;
         }
 
-        setQueryClauseForType(new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString()));
+        SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
+        typeClause.addToClauseVariables(jenaSparqlQuery.getResultVars());
+        setQueryClauseForType(typeClause);
 
     }
 
