@@ -26,6 +26,12 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
         }
     }
 
+    public RDFNtripleStatement(String subject, String predicate, String object) {
+        this.subject = subject;
+        this.predicate = predicate;
+        this.object = object;
+    }
+
     public Statement getRdfStatment() {
         return rdfStatment;
     }
@@ -103,6 +109,23 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
     public String getObject() {
         return object;
     }
+
+    public String getStatmentPart(StatementPartIdentifier statementPartIdentifier) {
+        switch (statementPartIdentifier) {
+            case SUBJECT:
+                return getSubject();
+
+            case PREDICATE:
+                return getPredicate();
+
+            case OBJECT:
+                return getObject();
+
+            default:
+                throw new UnsupportedOperationException("Stament part could not be identified.");
+        }
+    }
+
 
 
     public boolean objectIsURINode () {

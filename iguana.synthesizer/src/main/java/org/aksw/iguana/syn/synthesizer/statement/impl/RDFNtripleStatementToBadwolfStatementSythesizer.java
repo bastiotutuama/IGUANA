@@ -30,10 +30,48 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
 
         HashMap<AbstractStatement.StatementPartIdentifier, String> synthesizedStatementParts = new HashMap<>();
 
-        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.SUBJECT, rdfNtripleStatement.getSubject());
-        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.PREDICATE, rdfNtripleStatement.getPredicate());
-        /* Case-Handling for Synthesization of Literal Content with characters that are not allowed in BQL-Literals */
-        synthesizedStatementParts.put(AbstractStatement.StatementPartIdentifier.OBJECT, getObjectContentOfBQLStatemtentWithIllegalLiteralCharactersInObjectLiteralReplaced(rdfNtripleStatement));
+        //SUBJECT
+        AbstractStatement.StatementPartIdentifier statementPartIdentifier = AbstractStatement.StatementPartIdentifier.SUBJECT;
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+
+        //PREDICATE
+        statementPartIdentifier = AbstractStatement.StatementPartIdentifier.PREDICATE;
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+
+        //OBJECT
+        statementPartIdentifier = AbstractStatement.StatementPartIdentifier.OBJECT;
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+
+        return new BadwolfStatement(
+                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT),
+                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.PREDICATE),
+                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.OBJECT)
+        );
+    }
+
+    private static String synthesizeBadwolfStatementPartFromRDFStatementPart(AbstractStatement.StatementPartIdentifier statementPartIdentifier, RDFNtripleStatement rdfNtripleStatement, boolean statementPartIsQueryPatternVariable){
+        String synthesizedStatmentPart;
+
+        if (statementPartIsQueryPatternVariable) {
+            return rdfNtripleStatement.getStatmentPart(statementPartIdentifier);
+        } else {
+            switch (statementPartIdentifier) {
+                case SUBJECT:
+                case PREDICATE:
+                    synthesizedStatmentPart = rdfNtripleStatement.getStatmentPart(statementPartIdentifier);
+                    break;
+
+                case OBJECT:
+                    /* Case-Handling for Synthesization of Literal Content with characters that are not allowed in BQL-Literals */
+                    synthesizedStatmentPart = getObjectContentOfBQLStatemtentWithIllegalLiteralCharactersInObjectLiteralReplaced(rdfNtripleStatement);
+                    break;
+
+                default:
+                    synthesizedStatmentPart = "";
+                    throw new UnsupportedOperationException("Stament part could not be identified.");
+            }
+
+        }
 
         HashMap<AbstractStatement.StatementPartIdentifier, ArrayList<AbstractStatement.StatementControlSymbol>> statementControlSymbolsToSynthesize = new HashMap<>();
 
@@ -45,19 +83,19 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
                         AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET,
                         AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET,
                         AbstractStatement.StatementControlSymbol.URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST
-                    )
+                )
                 )
         );
 
         statementControlSymbolsToSynthesize.put(AbstractStatement.StatementPartIdentifier.PREDICATE,
                 new ArrayList<AbstractStatement.StatementControlSymbol>(Arrays.asList(
-                       AbstractStatement.StatementControlSymbol.URI_PREDICATE_SLASH,
+                        AbstractStatement.StatementControlSymbol.URI_PREDICATE_SLASH,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_PROTOCOL_COLON,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_FULLSTOP,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_OPENING_BRACKET,
                         AbstractStatement.StatementControlSymbol.URI_PREDICATE_CLOSING_BRACKET,
                         AbstractStatement.StatementControlSymbol.URI_ILLEGAL_PERCENT_WHICH_WILL_NOT_ESCAPE_IN_INSERT_HTTP_REQUEST
-                    )
+                )
                 )
         );
 
@@ -74,67 +112,46 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
                 )
         );
 
-        ArrayList<AbstractStatement.StatementPartIdentifier> statementPartIdentifiersToIterateOver = new ArrayList<>(
-                Arrays.asList(
-                        AbstractStatement.StatementPartIdentifier.SUBJECT,
-                        AbstractStatement.StatementPartIdentifier.PREDICATE,
-                        AbstractStatement.StatementPartIdentifier.OBJECT)
-        );
+        ArrayList<AbstractStatement.StatementControlSymbol> currentStatementPartControlSymbolsToSynthesize;
+
+        /** Synthesization of each statement-part: SUBJECT, PREDICATE, OBJECT*/
+
+        if (statementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsURINode()) {
+            //If Object is URI-Node, use the SUBJECT-synthesization
+            currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(AbstractStatement.StatementPartIdentifier.SUBJECT);
+        } else {
+            currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(statementPartIdentifier);
+        }
 
 
-        for (AbstractStatement.StatementPartIdentifier currentStatementPartIdentifier: statementPartIdentifiersToIterateOver) {
+        for (AbstractStatement.StatementControlSymbol currentStatementPartControlSymbolToSynthesize : currentStatementPartControlSymbolsToSynthesize) {
 
-            ArrayList<AbstractStatement.StatementControlSymbol> currentStatementPartControlSymbolsToSynthesize;
+            String controlSymbolReplacementTarget = RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
+            String controlSymbolReplacementSource = BadwolfStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
 
-            /** Synthesization of each statement-part: SUBJECT, PREDICATE, OBJECT*/
+            /*Actual statement-part synthesization through character replace*/
+            synthesizedStatmentPart = synthesizedStatmentPart.replace(controlSymbolReplacementTarget, controlSymbolReplacementSource);
 
-            if (currentStatementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsURINode()) {
-                //If Object is URI-Node, use the SUBJECT-synthesization
-                currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(AbstractStatement.StatementPartIdentifier.SUBJECT);
-            } else {
-                currentStatementPartControlSymbolsToSynthesize = statementControlSymbolsToSynthesize.get(currentStatementPartIdentifier);
-            }
+        }
 
+        if (statementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsLiteral()) {
 
-            for (AbstractStatement.StatementControlSymbol currentStatementPartControlSymbolToSynthesize : currentStatementPartControlSymbolsToSynthesize) {
-
-                String controlSymbolReplacementTarget = RDFNtripleStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
-                String controlSymbolReplacementSource = BadwolfStatement.getStatementControlSymbol(currentStatementPartControlSymbolToSynthesize);
-
-                /*Actual statement-part synthesization through character replace*/
-                synthesizedStatementParts.put(currentStatementPartIdentifier,
-                        synthesizedStatementParts.get(currentStatementPartIdentifier).replace(controlSymbolReplacementTarget, controlSymbolReplacementSource)
-                );
-
-            }
-
-            if (currentStatementPartIdentifier == AbstractStatement.StatementPartIdentifier.OBJECT && rdfNtripleStatement.objectIsLiteral()) {
-
-                /* Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL. */
-                //check if no control-symbol-mapping is present in Source-Statement-Dictionary
-                String objectLiteralDatatypeURI = rdfNtripleStatement.getObjectLiteralDatatypeURI();
-                if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(objectLiteralDatatypeURI)) {
-                    //No Mapping exists in source-Statement-Dictionary -> No adequate mapping in target-Statement-Dictionary available => replace with BQL default Datatype-Identifer (type:text).
-                    String completeRdfNtripleDatatypeAssertion = rdfNtripleStatement.getCompleteObjectLiteralDatatypeAssertion();
-                    synthesizedStatementParts.put(currentStatementPartIdentifier,
-                            synthesizedStatementParts.get(currentStatementPartIdentifier).replace(
-                                    completeRdfNtripleDatatypeAssertion,
-                                    BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT)
-                            )
-                    );
-                }
-
-
+            /* Case-Handling for Synthesization of Literal Datatypes which are not associated in BQL. */
+            //check if no control-symbol-mapping is present in Source-Statement-Dictionary
+            String objectLiteralDatatypeURI = rdfNtripleStatement.getObjectLiteralDatatypeURI();
+            if (!RDFNtripleStatement.doesStatementControlSymbolExistForString(objectLiteralDatatypeURI)) {
+                //No Mapping exists in source-Statement-Dictionary -> No adequate mapping in target-Statement-Dictionary available => replace with BQL default Datatype-Identifer (type:text).
+                String completeRdfNtripleDatatypeAssertion = rdfNtripleStatement.getCompleteObjectLiteralDatatypeAssertion();
+                synthesizedStatmentPart = synthesizedStatmentPart.replace(
+                                completeRdfNtripleDatatypeAssertion,
+                                BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_TEXT)
+                        );
             }
 
 
         }
 
-        return new BadwolfStatement(
-                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT),
-                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.PREDICATE),
-                synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.OBJECT)
-        );
+        return synthesizedStatmentPart;
     }
 
     /**
