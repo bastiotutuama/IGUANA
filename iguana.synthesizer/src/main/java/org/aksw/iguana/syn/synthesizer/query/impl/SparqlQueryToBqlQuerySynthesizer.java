@@ -80,6 +80,13 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
                     System.out.println();
                 }
 
+                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE) != null) {
+                    System.out.println("GROUP BY CLAUSE");
+                    QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE);
+                    System.out.println(((AbstractQueryClause) groupByClause).getClauseElements());
+                    System.out.println();
+                }
+
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }
 

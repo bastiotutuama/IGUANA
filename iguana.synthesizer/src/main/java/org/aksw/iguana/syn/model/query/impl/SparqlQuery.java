@@ -8,6 +8,7 @@ import org.apache.jena.query.SortCondition;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
+import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
 import org.apache.jena.sparql.expr.ExprVar;
@@ -71,18 +72,43 @@ public class SparqlQuery extends AbstractQuery implements Query {
         //PATTERN CLAUSE
         fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
         SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriples().toArray()));
+        patternClause.setClauseKeyword("WHERE");
         patternClause.addToClauseElements(getQueryPatternTriples());
         setQueryClauseForType(patternClause);
 
         //ORDER BY CLAUSE
-        if (jenaSparqlQuery.hasOrderBy() && orderByHasOnlySimpleDirectionExpressions()) {
-            String sortOrderValue = jenaSparqlQuery.getOrderBy().toString();
-            SparqlQueryClause orderByClause = new SparqlQueryClause(QueryClauseType.RESULTS_ORDER_CLAUSE, sortOrderValue);
+        if (jenaSparqlQuery.hasOrderBy() && orderByContainsOnlySimpleDirectionExpressions()) {
+            SparqlQueryClause orderByClause = new SparqlQueryClause(QueryClauseType.RESULTS_ORDER_CLAUSE, jenaSparqlQuery.getOrderBy().toString());
+            orderByClause.setClauseKeyword("ORDER BY");
+
             for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
                 QueryClause.SortOrder currentConditionSortOrder = currentSortCondition.getDirection() == -1 ? QueryClause.SortOrder.DESC : QueryClause.SortOrder.ASC;
                 orderByClause.addToClauseSortConditions(currentSortCondition.getExpression().getVarName(), currentConditionSortOrder);
             }
             setQueryClauseForType(orderByClause);
+        }
+
+        //GROUP BY CLAUSE
+        if (jenaSparqlQuery.hasGroupBy() && groupByContainsOnlySimpleVariablesAsExpressions()) {
+            SparqlQueryClause groupByClause = new SparqlQueryClause(QueryClauseType.RESULTS_GROUP_CLAUSE, jenaSparqlQuery.getGroupBy().toString());
+            groupByClause.setClauseKeyword("GROUP BY");
+
+            for (Var currentGroupByVariable:jenaSparqlQuery.getGroupBy().getVars()) {
+                groupByClause.addToClauseElements(currentGroupByVariable.getVarName());
+            }
+
+            //Case of implicit group by:
+            if (jenaSparqlQuery.getGroupBy().getVars().size() == 0 && !resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression()) {
+                for (Expr jenaSparqlResultExpression:getJenaSparqlResultExpressionsList()) {
+                    Aggregator aggregator = ((ExprAggregator) jenaSparqlResultExpression).getAggregator();
+                    String implicitVarName = aggregator.getExprList().get(0).getVarName();
+                    groupByClause.addToClauseElements(implicitVarName);
+                    groupByClause.setClauseString(groupByClause.toString() + " - Implicit GROUP BY");
+                }
+            }
+
+            setQueryClauseForType(groupByClause);
+            System.out.println();
         }
 
     }
@@ -187,12 +213,18 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return false;
     }
 
-    public boolean orderByHasOnlySimpleDirectionExpressions(){
+    public boolean orderByContainsOnlySimpleDirectionExpressions(){
         for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
             if (!(currentSortCondition.getExpression() instanceof ExprVar)){
                 return false;
             }
         }
+        return true;
+    }
+
+    public boolean groupByContainsOnlySimpleVariablesAsExpressions(){
+        if (jenaSparqlQuery.getGroupBy().getExprs().size() > 0)
+            return false;
         return true;
     }
 }
