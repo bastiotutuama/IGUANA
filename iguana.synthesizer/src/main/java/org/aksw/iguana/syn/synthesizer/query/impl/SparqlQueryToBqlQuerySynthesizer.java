@@ -1,5 +1,6 @@
 package org.aksw.iguana.syn.synthesizer.query.impl;
 
+import org.aksw.iguana.syn.model.query.AbstractQueryClause;
 import org.aksw.iguana.syn.model.query.Query;
 import org.aksw.iguana.syn.model.query.impl.SparqlQuery;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
@@ -10,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
@@ -46,6 +49,13 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
                 //System.out.println(jenaSparqlQueryFromFile.getQueryPattern().toString());
                 System.out.println(sparqlQueryFromFile);
+
+                System.out.println("TYPE CLAUSE");
+                System.out.println("Keyword: " + sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE).getClauseKeyword());
+                List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE)).getClauseVariables();
+                System.out.println("result variables: " + Arrays.toString(clauseVars.toArray()));
+                System.out.println("result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE)).getClauseVariableAggregatorExpressions() + "\n");
+
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }
 
@@ -72,6 +82,9 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
 
         //TO REVIEW
         if (sparqlQuery.queryPatternContainsNamedGraphElement())
+            return false;
+
+        if (sparqlQuery.resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression())
             return false;
 
         return true;

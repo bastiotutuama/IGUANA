@@ -8,4 +8,8 @@ public interface QueryClause {
 
     public void setClauseString(String clauseString);
 
+    public String getClauseKeyword();
+
+    public void setClauseKeyword(String clauseString);
+
 }

@@ -1,7 +1,9 @@
 package org.aksw.iguana.syn.model.query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractQueryClause implements QueryClause{
 
@@ -11,8 +13,10 @@ public abstract class AbstractQueryClause implements QueryClause{
     }
 
     private Query.QueryClauseType queryClauseType;
+    private String clauseKeyword;
     private String clauseString;
     private ArrayList<String> clauseVariables = new ArrayList<>();
+    private Map<String, String> clauseVariableAggregatorExpressions = new HashMap<>();
 
 
     public void setQueryClauseType(Query.QueryClauseType queryClauseType) {
@@ -34,11 +38,33 @@ public abstract class AbstractQueryClause implements QueryClause{
         this.clauseString = clauseString;
     }
 
-    public void addToClauseVariables(List<String> newClauseElements) {
-        clauseVariables.addAll(newClauseElements);
+    @Override
+    public String getClauseKeyword() {
+        return clauseKeyword;
     }
 
-    public void addToClauseVariables(String newClauseElement){
-        clauseVariables.add(newClauseElement);
+    @Override
+    public void setClauseKeyword(String clauseKeyword) {
+        this.clauseKeyword = clauseKeyword;
+    }
+
+    public void addToClauseVariables(List<String> newClauseVariable) {
+        clauseVariables.addAll(newClauseVariable);
+    }
+
+    public void addToClauseVariables(String newClauseVariable){
+        clauseVariables.add(newClauseVariable);
+    }
+
+    public ArrayList<String> getClauseVariables() {
+        return clauseVariables;
+    }
+
+    public Map<String, String> getClauseVariableAggregatorExpressions() {
+        return clauseVariableAggregatorExpressions;
+    }
+
+    public void addToClauseVariableAggregatorExpressions(String variable, String variableAggregatorExpression){
+        clauseVariableAggregatorExpressions.put(variable, variableAggregatorExpression);
     }
 }

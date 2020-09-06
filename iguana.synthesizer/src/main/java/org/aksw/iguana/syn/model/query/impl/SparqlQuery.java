@@ -4,10 +4,14 @@ import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.core.VarExprList;
+import org.apache.jena.sparql.expr.Expr;
+import org.apache.jena.sparql.expr.ExprAggregator;
+import org.apache.jena.sparql.expr.aggregate.*;
 import org.apache.jena.sparql.syntax.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class SparqlQuery extends AbstractQuery implements Query {
 
@@ -35,8 +39,20 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 break;
         }
 
+        //Type Clause Extraction
         SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
+        typeClause.setClauseKeyword(jenaSparqlQuery.queryType().toString());
         typeClause.addToClauseVariables(jenaSparqlQuery.getResultVars());
+        jenaSparqlQuery.getProject().getExprs().forEach(new BiConsumer<Var, Expr>() {
+            @Override
+            public void accept(Var variable, Expr expression) {
+                if (expression instanceof ExprAggregator){
+                    Aggregator aggregator = ((ExprAggregator) expression).getAggregator();
+                    typeClause.addToClauseVariableAggregatorExpressions(variable.getVarName(), aggregator.toString());
+                }
+            }
+        });
+        //Type Clause addition
         setQueryClauseForType(typeClause);
 
     }
@@ -84,6 +100,22 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return checkJenaQueryPatternElementsForSpecificElement(ElementNamedGraph.class);
     }
 
+    private Collection<Expr> getJenaSparqlResultExpressionsList(){
+        return jenaSparqlQuery.getProject().getExprs().values();
+    }
 
-
+    public boolean resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression(){
+        for (Expr jenaSparqlResultExpression:getJenaSparqlResultExpressionsList()) {
+            if (jenaSparqlResultExpression instanceof ExprAggregator){
+                Aggregator aggregator = ((ExprAggregator) jenaSparqlResultExpression).getAggregator();
+                //if (!(aggregator instanceof AggCountVar || aggregator instanceof AggCountVarDistinct || aggregator instanceof AggSum))
+                if (! (aggregator.getName().equals("COUNT") || aggregator.getName().equals("SUM")))
+                    return true;
+            } else {
+                //Expression is no Aggregator
+                return true;
+            }
+        }
+        return false;
+    }
 }
