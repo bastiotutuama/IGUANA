@@ -7,14 +7,14 @@ public class BqlQuery extends AbstractQuery implements Query {
 
     private String bqlQuery;
 
-    public BqlQuery(String bqlQuery, Type queryType) {
+    public BqlQuery(String bqlQuery, QueryType queryType) {
         this.bqlQuery = bqlQuery;
         setQueryType(queryType);
     }
 
     @Override
-    public Language getLanguage() {
-        return Language.BQL;
+    public QueryLanguage getQueryLanguage() {
+        return QueryLanguage.BQL;
     }
 
     @Override

@@ -2,17 +2,18 @@ package org.aksw.iguana.syn.model.query.impl;
 
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
-import org.apache.jena.query.QueryType;
+import org.aksw.iguana.syn.model.query.QueryClause;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.syntax.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class SparqlQuery extends AbstractQuery implements Query {
 
     private org.apache.jena.query.Query jenaSparqlQuery;
     private List<Element> jenaQueryPatternElements;
-    private static QueryType[] supportedJenaQueryTypes = {QueryType.SELECT, QueryType.CONSTRUCT};
+    private static org.apache.jena.query.QueryType[] supportedJenaQueryTypes = {org.apache.jena.query.QueryType.SELECT, org.apache.jena.query.QueryType.CONSTRUCT};
 
     public SparqlQuery(org.apache.jena.query.Query jenaSparqlQuery) {
 
@@ -22,23 +23,25 @@ public class SparqlQuery extends AbstractQuery implements Query {
         //Map Jena-QueryType to Synthesizer-Query-Type
         switch (this.jenaSparqlQuery.queryType()) {
             case SELECT:
-                setQueryType(Type.SELECT);
+                setQueryType(QueryType.SELECT);
                 break;
 
             case CONSTRUCT:
-                setQueryType(Type.CONSTRUCT);
+                setQueryType(QueryType.CONSTRUCT);
                 break;
 
             default:
-                setQueryType(Type.UNSUPPORTED);
+                setQueryType(QueryType.UNSUPPORTED);
                 break;
         }
+
+        setQueryClauseForType(new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString()));
 
     }
 
     @Override
-    public Language getLanguage() {
-        return Language.SPARQL;
+    public QueryLanguage getQueryLanguage() {
+        return QueryLanguage.SPARQL;
     }
 
     @Override
@@ -46,7 +49,8 @@ public class SparqlQuery extends AbstractQuery implements Query {
         return jenaSparqlQuery.toString(Syntax.syntaxSPARQL_11);
     }
 
-    public static QueryType[] getSupportedJenaQueryTypes() {
+
+    public static org.apache.jena.query.QueryType[] getSupportedJenaQueryTypes() {
         return supportedJenaQueryTypes;
     }
 
