@@ -3,6 +3,7 @@ package org.aksw.iguana.syn.model.query.impl;
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
 import org.aksw.iguana.syn.model.query.QueryClause;
+import org.apache.jena.graph.Node;
 import org.apache.jena.query.SortCondition;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.TriplePath;
@@ -123,28 +124,24 @@ public class SparqlQuery extends AbstractQuery implements Query {
 
     private void addToJenaQuerryPatternTriplePathsAndTriples(TriplePath triplePath){
         jenaQueryPatternTriplePaths.add(triplePath);
-        StringBuilder currentTriple = new StringBuilder();
-        //Subject
-        if (triplePath.getSubject().isURI()) {
-            currentTriple.append("<" + triplePath.getSubject().toString() + ">");
+        String currentTriple =
+                //Subject
+                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getSubject()) +
+                " " +
+                //Predicate
+                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getPredicate()) +
+                " " +
+                //Object
+                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getObject());
+        queryPatternTriples.add(currentTriple);
+    }
+
+    private static String getUriWithBracketsOrSimpleStringFromTripleNode(Node tripleNode){
+        if (tripleNode.isURI()) {
+            return "<" + tripleNode.toString() + ">";
         } else {
-            currentTriple.append(triplePath.getSubject().toString());
+            return tripleNode.toString();
         }
-        currentTriple.append(" ");
-        //Predicate
-        if (triplePath.getPredicate().isURI()) {
-            currentTriple.append("<" + triplePath.getPredicate().toString() + ">");
-        } else {
-            currentTriple.append(triplePath.getPredicate().toString());
-        }
-        currentTriple.append(" ");
-        //Object
-        if (triplePath.getObject().isURI()) {
-            currentTriple.append("<" + triplePath.getObject().toString() + ">");
-        } else {
-            currentTriple.append(triplePath.getObject().toString());
-        }
-        queryPatternTriples.add(currentTriple.toString());
     }
 
     public List<String> getQueryPatternTriples() {
