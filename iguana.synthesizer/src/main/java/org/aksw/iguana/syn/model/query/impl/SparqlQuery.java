@@ -20,15 +20,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import static org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement.getTripleNodeAsRDFNtripleNodeString;
-
 public class SparqlQuery extends AbstractQuery implements Query {
 
     private org.apache.jena.query.Query jenaSparqlQuery;
     private static org.apache.jena.query.QueryType[] supportedJenaQueryTypes = {org.apache.jena.query.QueryType.SELECT, org.apache.jena.query.QueryType.CONSTRUCT};
     private List<Element> jenaQueryPatternElements;
     private List<RDFNtripleStatement> jenaQueryPatternTripleStatements = new ArrayList<>();
-    private List<String> queryPatternTriples = new ArrayList<>();
+    private List<String> queryPatternTriplesAsRdfNtriple = new ArrayList<>();
 
     public SparqlQuery(org.apache.jena.query.Query jenaSparqlQuery) {
 
@@ -53,7 +51,7 @@ public class SparqlQuery extends AbstractQuery implements Query {
         //TYPE CLAUSE
         SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
         typeClause.setClauseKeyword(jenaSparqlQuery.queryType().toString());
-        setQueryClauseForType(typeClause);
+        addQueryClause(typeClause);
 
         //RESULT VARIABLES CLAUSE
         String resultVariablesClauseString = ""; //TODO
@@ -68,14 +66,14 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 }
             }
         });
-        setQueryClauseForType(resultVariablesClause);
+        addQueryClause(resultVariablesClause);
 
         //PATTERN CLAUSE
         fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
-        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriples().toArray()));
+        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriplesAsRdfNtriple().toArray()));
         patternClause.setClauseKeyword("WHERE");
-        patternClause.addToClauseElements(getQueryPatternTriples());
-        setQueryClauseForType(patternClause);
+        patternClause.addToClauseElements(getQueryPatternTriplesAsRdfNtriple());
+        addQueryClause(patternClause);
 
         //ORDER BY CLAUSE
         if (jenaSparqlQuery.hasOrderBy() && orderByContainsOnlySimpleDirectionExpressions()) {
@@ -86,7 +84,7 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 QueryClause.SortOrder currentConditionSortOrder = currentSortCondition.getDirection() == -1 ? QueryClause.SortOrder.DESC : QueryClause.SortOrder.ASC;
                 orderByClause.addToClauseSortConditions(currentSortCondition.getExpression().getVarName(), currentConditionSortOrder);
             }
-            setQueryClauseForType(orderByClause);
+            addQueryClause(orderByClause);
         }
 
         //GROUP BY CLAUSE
@@ -107,7 +105,7 @@ public class SparqlQuery extends AbstractQuery implements Query {
                     groupByClause.setClauseString(groupByClause.toString() + " - Implicit GROUP BY");
                 }
             }
-            setQueryClauseForType(groupByClause);
+            addQueryClause(groupByClause);
         }
 
         //HAVING CLAUSE
@@ -119,7 +117,7 @@ public class SparqlQuery extends AbstractQuery implements Query {
             SparqlQueryClause limitClause = new SparqlQueryClause(QueryClauseType.RESULT_LIMIT_CLAUSE, "LIMIT " + jenaSparqlQuery.getLimit());
             limitClause.setClauseKeyword("LIMIT");
             limitClause.setClauseSpecificationAmount(jenaSparqlQuery.getLimit());
-            setQueryClauseForType(limitClause);
+            addQueryClause(limitClause);
         }
 
     }
@@ -162,12 +160,12 @@ public class SparqlQuery extends AbstractQuery implements Query {
     private void addToJenaQuerryPatternTripleStatementsAndTriples(TriplePath triplePath){
         RDFNtripleStatement queryPatternRdfNtripleStatement =  new RDFNtripleStatement(triplePath);
         jenaQueryPatternTripleStatements.add(queryPatternRdfNtripleStatement);
-        queryPatternTriples.add(queryPatternRdfNtripleStatement.getCompleteStatementWithoutFullStop());
+        queryPatternTriplesAsRdfNtriple.add(queryPatternRdfNtripleStatement.getCompleteStatementWithoutFullStop());
     }
 
 
-    public List<String> getQueryPatternTriples() {
-        return queryPatternTriples;
+    public List<String> getQueryPatternTriplesAsRdfNtriple() {
+        return queryPatternTriplesAsRdfNtriple;
     }
 
     private boolean checkJenaQueryPatternElementsForSpecificElement(Class specificQueryPatternElement){

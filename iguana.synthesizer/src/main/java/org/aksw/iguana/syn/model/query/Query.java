@@ -37,6 +37,6 @@ public interface Query {
 
     public QueryClause getQueryClauseForType(QueryClauseType queryClauseType);
 
-    public void setQueryClauseForType(QueryClause queryClause);
+    public void addQueryClause(QueryClause queryClause);
 
 }

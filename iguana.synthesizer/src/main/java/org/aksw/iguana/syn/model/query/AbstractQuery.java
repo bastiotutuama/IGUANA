@@ -17,30 +17,6 @@ public abstract class AbstractQuery implements Query {
     }
 
     @Override
-    public String getQueryAsString() {
-        StringBuilder queryStringBuilder = new StringBuilder();
-
-        ArrayList<QueryClauseType> queryClauseTypes = new ArrayList<>(Arrays.asList(
-                QueryClauseType.TYPE_CLAUSE,
-                QueryClauseType.RESULT_VARIABLES_CLAUSE,
-                QueryClauseType.SOURCE_GRAPHS_CLAUSE,
-                QueryClauseType.DESTINATION_GRAPHS_CLAUSE,
-                QueryClauseType.PATTERN_CLAUSE,
-                QueryClauseType.RESULTS_ORDER_CLAUSE,
-                QueryClauseType.RESULTS_GROUP_CLAUSE,
-                QueryClauseType.RESULT_HAVING_CLAUSE,
-                QueryClauseType.RESULT_LIMIT_CLAUSE
-            )
-        );
-
-        for (QueryClauseType currentQueryClauseType:queryClauseTypes) {
-            queryStringBuilder.append(getQueryClauseForType(currentQueryClauseType));
-        }
-
-        return queryStringBuilder.toString();
-    }
-
-    @Override
     public QueryType getQueryType() {
         return queryType;
     }
@@ -55,7 +31,7 @@ public abstract class AbstractQuery implements Query {
     }
 
     @Override
-    public void setQueryClauseForType(QueryClause queryClause) {
+    public void addQueryClause(QueryClause queryClause) {
         this.queryClauses.put(queryClause.getClauseType(), queryClause);
     }
 
