@@ -128,6 +128,7 @@ public class MainController {
 
     private static void synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(ArrayList<Statement> rdfNtripleStatements, String outputFilePath){
         ArrayList<String> synthesizedBadwolfStatements = new ArrayList<>();
+        ArrayList<String> synthesizedBadwolfStatementsAsBqlInsert = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements("GRAPH_NAME", rdfNtripleStatements);
         for (Statement rdfNtripleStatement : rdfNtripleStatements) {
 
             if (debugOutPutEnabled) {
@@ -144,7 +145,9 @@ public class MainController {
 
             synthesizedBadwolfStatements.add(synthesizedBadwolfStatement);
         }
+        String outputFilePathForCorrespondingBqlInserts = outputFilePath.replace(".badwolf", "_bql_insert-queries.bql");
         writeListOfStringsToFile(synthesizedBadwolfStatements, outputFilePath);
+        writeListOfStringsToFile(synthesizedBadwolfStatementsAsBqlInsert, outputFilePathForCorrespondingBqlInserts);
     }
 
     private static void synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(ArrayList<Statement> rdfNtripleStatements, String graphName, String endpointAdress, int chunkSize, String inputFilePath){
