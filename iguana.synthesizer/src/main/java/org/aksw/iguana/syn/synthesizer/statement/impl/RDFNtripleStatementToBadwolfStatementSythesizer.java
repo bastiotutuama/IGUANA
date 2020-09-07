@@ -202,7 +202,7 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
         ArrayList<String> bqlInsertQueries = new ArrayList<>();
 
         for (Statement fileStatement : rdfNtripleStatements) {
-            String synthesizedBQLInsertStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBadwolfStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
+            String synthesizedBQLInsertStatement = synthesizeBadwolfStatementFromRDFStatement((RDFNtripleStatement) fileStatement).getCompleteStatementWithoutFullStop();
             bqlInsertQueries.add("INSERT DATA INTO ?" + graphName + " {" + synthesizedBQLInsertStatement + "};");
         }
         return bqlInsertQueries;

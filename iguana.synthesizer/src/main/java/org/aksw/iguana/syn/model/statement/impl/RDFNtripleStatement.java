@@ -17,7 +17,7 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
     private Node objectNode;
 
     public RDFNtripleStatement(Statement rdfStatment) {
-       this(rdfStatment.getSubject().asNode(), rdfStatment.getPredicate().asNode(), rdfStatment.getSubject().asNode());
+       this(rdfStatment.getSubject().asNode(), rdfStatment.getPredicate().asNode(), rdfStatment.getObject().asNode());
     }
 
     public RDFNtripleStatement(TriplePath triplePath) {
