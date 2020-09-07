@@ -11,9 +11,26 @@ public abstract class AbstractStatement implements Statement{
         OBJECT
     }
 
-    public enum StatementLanguageIdentifier {
-        RDF_NTRIPLE,
-        BQL_INSERT
+    public enum StatementLanguage {
+        RDF_NTRIPLE("N-TRPLE"),
+        BQL_INSERT("");
+
+        private final String jenaLanguageIdentifier;
+
+        /**
+         * @param jenaLanguageIdentifier
+         */
+        StatementLanguage(final String jenaLanguageIdentifier) {
+            this.jenaLanguageIdentifier = jenaLanguageIdentifier;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Enum#toString()
+         */
+        @Override
+        public String toString() {
+            return jenaLanguageIdentifier;
+        }
     }
 
     public enum StatementControlSymbol {

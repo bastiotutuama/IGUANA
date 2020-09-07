@@ -1,45 +1,29 @@
 package org.aksw.iguana.syn.util;
 
+import org.aksw.iguana.syn.model.query.impl.SparqlQuery;
+import org.aksw.iguana.syn.model.statement.AbstractStatement;
 import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
+import org.apache.jena.query.QueryFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.riot.RDFDataMgr;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class FileParser {
 
-    /**
-     * Serialized Strings as seen here: https://jena.apache.org/documentation/javadoc/jena/org/apache/jena/rdf/model/Model.html#read-java.lang.String-java.lang.String-
-     */
-    public enum SupportedInputLanguage{
-
-        N_TRIPLE("N-TRIPLE");
-
-        private final String jenaLangIdentifier;
-
-        /**
-         * @param jenaLangIdentifier
-         */
-        SupportedInputLanguage(final String jenaLangIdentifier) {
-            this.jenaLangIdentifier = jenaLangIdentifier;
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Enum#toString()
-         */
-        @Override
-        public String toString() {
-            return jenaLangIdentifier;
-        }
-    }
 
     private static String DEFAULT_BASE_URL = "https://example.com";
 
-    public static ArrayList<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFilePath, SupportedInputLanguage supportedInputLanguage){
+    public static ArrayList<org.aksw.iguana.syn.model.statement.Statement> readInStatementsFromFile(String inputFilePath, AbstractStatement.StatementLanguage statementLanguage){
         // create an empty model
         Model model = ModelFactory.createDefaultModel();
 
@@ -51,7 +35,7 @@ public class FileParser {
         }
 
         // read the RDF file given in the specified language
-        model.read(inputStream, DEFAULT_BASE_URL, supportedInputLanguage.toString());
+        model.read(inputStream, DEFAULT_BASE_URL, statementLanguage.toString());
 
         // write it to standard out
         //model.write(System.out, SupportedInputLanguage.N_TRIPLE.toString());
@@ -75,6 +59,26 @@ public class FileParser {
 
         return statementsFromFile;
 
+    }
+
+    public static  ArrayList<SparqlQuery> readInSparqlQueriesFromFile(String pInputFilePath){
+
+        Path inputFilePath = Paths.get(pInputFilePath);
+        ArrayList<SparqlQuery> sparqlQueriesFromFile = new ArrayList<>();
+
+        try {
+            Files.lines(inputFilePath).forEach(new Consumer<String>() {
+                @Override
+                public void accept(String queryFromFile) {
+                    org.apache.jena.query.Query jenaSparqlQueryFromFile = QueryFactory.create(queryFromFile);
+                    sparqlQueriesFromFile.add(new SparqlQuery(jenaSparqlQueryFromFile));
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return sparqlQueriesFromFile;
     }
 
 }

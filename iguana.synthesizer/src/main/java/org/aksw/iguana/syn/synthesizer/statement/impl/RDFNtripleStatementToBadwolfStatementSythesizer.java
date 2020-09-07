@@ -14,14 +14,14 @@ import java.util.List;
 
 public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesizer {
 
-    private final AbstractStatement.StatementLanguageIdentifier sourceLanguage = AbstractStatement.StatementLanguageIdentifier.RDF_NTRIPLE;
-    private final AbstractStatement.StatementLanguageIdentifier targetLanguage = AbstractStatement.StatementLanguageIdentifier.BQL_INSERT;
+    private final AbstractStatement.StatementLanguage sourceLanguage = AbstractStatement.StatementLanguage.RDF_NTRIPLE;
+    private final AbstractStatement.StatementLanguage targetLanguage = AbstractStatement.StatementLanguage.BQL_INSERT;
 
-    public AbstractStatement.StatementLanguageIdentifier getSourceLanguage() {
+    public AbstractStatement.StatementLanguage getSourceLanguage() {
         return sourceLanguage;
     }
 
-    public AbstractStatement.StatementLanguageIdentifier getTargetLanguage() {
+    public AbstractStatement.StatementLanguage getTargetLanguage() {
         return targetLanguage;
     }
 

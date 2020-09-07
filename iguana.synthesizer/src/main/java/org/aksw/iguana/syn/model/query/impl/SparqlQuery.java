@@ -11,7 +11,7 @@ import org.apache.jena.sparql.core.Var;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
 import org.apache.jena.sparql.expr.ExprVar;
-import org.apache.jena.sparql.expr.aggregate.*;
+import org.apache.jena.sparql.expr.aggregate.Aggregator;
 import org.apache.jena.sparql.syntax.*;
 
 import java.util.ArrayList;
@@ -133,6 +133,10 @@ public class SparqlQuery extends AbstractQuery implements Query {
     @Override
     public String getQueryAsString() {
         return jenaSparqlQuery.toString(Syntax.syntaxSPARQL_11);
+    }
+
+    public String getQueryAsStringInOneLine() {
+        return getQueryAsString().replace("\n", "");
     }
 
     private List<Element> getJenaQueryPatternElements(){
