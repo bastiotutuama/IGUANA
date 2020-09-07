@@ -70,9 +70,9 @@ public class SparqlQuery extends AbstractQuery implements Query {
 
         //PATTERN CLAUSE
         fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
-        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriplesAsRdfNtriple().toArray()));
+        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriplesAsRdfNtripleString().toArray()));
         patternClause.setClauseKeyword("WHERE");
-        patternClause.addToClauseElements(getQueryPatternTriplesAsRdfNtriple());
+        patternClause.addToClauseElements(getQueryPatternTriplesAsRdfNtripleString());
         addQueryClause(patternClause);
 
         //ORDER BY CLAUSE
@@ -164,8 +164,12 @@ public class SparqlQuery extends AbstractQuery implements Query {
     }
 
 
-    public List<String> getQueryPatternTriplesAsRdfNtriple() {
+    public List<String> getQueryPatternTriplesAsRdfNtripleString() {
         return queryPatternTriplesAsRdfNtriple;
+    }
+
+    public List<RDFNtripleStatement> getJenaQueryPatternTripleStatements() {
+        return jenaQueryPatternTripleStatements;
     }
 
     private boolean checkJenaQueryPatternElementsForSpecificElement(Class specificQueryPatternElement){

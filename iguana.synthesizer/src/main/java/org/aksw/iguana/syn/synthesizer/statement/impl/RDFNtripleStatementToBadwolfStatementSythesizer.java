@@ -32,15 +32,15 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
 
         //SUBJECT
         AbstractStatement.StatementPartIdentifier statementPartIdentifier = AbstractStatement.StatementPartIdentifier.SUBJECT;
-        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement));
 
         //PREDICATE
         statementPartIdentifier = AbstractStatement.StatementPartIdentifier.PREDICATE;
-        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement));
 
         //OBJECT
         statementPartIdentifier = AbstractStatement.StatementPartIdentifier.OBJECT;
-        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement, false));
+        synthesizedStatementParts.put(statementPartIdentifier, synthesizeBadwolfStatementPartFromRDFStatementPart(statementPartIdentifier, rdfNtripleStatement));
 
         return new BadwolfStatement(
                 synthesizedStatementParts.get(AbstractStatement.StatementPartIdentifier.SUBJECT),
@@ -49,8 +49,11 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
         );
     }
 
-    private static String synthesizeBadwolfStatementPartFromRDFStatementPart(AbstractStatement.StatementPartIdentifier statementPartIdentifier, RDFNtripleStatement rdfNtripleStatement, boolean statementPartIsQueryPatternVariable){
+    private static String synthesizeBadwolfStatementPartFromRDFStatementPart(AbstractStatement.StatementPartIdentifier statementPartIdentifier, RDFNtripleStatement rdfNtripleStatement){
         String synthesizedStatmentPart;
+
+        //Case for QueryPattern Variable: First character is '?'.
+        boolean statementPartIsQueryPatternVariable = rdfNtripleStatement.getStatmentPart(statementPartIdentifier).charAt(0) == "?".charAt(0);
 
         if (statementPartIsQueryPatternVariable) {
             return rdfNtripleStatement.getStatmentPart(statementPartIdentifier);

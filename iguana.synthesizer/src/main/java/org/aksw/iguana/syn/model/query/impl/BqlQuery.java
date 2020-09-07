@@ -99,16 +99,48 @@ public class BqlQuery extends AbstractQuery implements Query {
                             if (patternStatementsIterator.hasNext())
                                 queryStringBuilder.append(" . ");
                         }
-                        queryStringBuilder.append(" } ");
+                        queryStringBuilder.append(" }");
+                        if (!(  getQueryClauseForType(QueryClauseType.RESULTS_ORDER_CLAUSE) == null &&
+                                getQueryClauseForType(QueryClauseType.RESULTS_GROUP_CLAUSE) == null &&
+                                getQueryClauseForType(QueryClauseType.RESULT_HAVING_CLAUSE) == null &&
+                                getQueryClauseForType(QueryClauseType.RESULT_LIMIT_CLAUSE) == null)){
+                            queryStringBuilder.append(" ");
+                        }
                         break;
 
                     case RESULTS_ORDER_CLAUSE:
+                        Iterator<String> sortVariablesIterator = currentBqlQueryClause.getClauseSortConditions().keySet().iterator();
+                        while (sortVariablesIterator.hasNext()) {
+                            String sortVariable = sortVariablesIterator.next();
+
+                            queryStringBuilder.append("?");
+                            queryStringBuilder.append(sortVariable);
+                            queryStringBuilder.append(" ");
+                            queryStringBuilder.append(currentBqlQueryClause.getClauseSortConditions().get(sortVariable).toString());
+
+                            if (sortVariablesIterator.hasNext())
+                                queryStringBuilder.append(", ");
+                        }
                         break;
+
                     case RESULTS_GROUP_CLAUSE:
+                        Iterator<String> groupVariablesIterator = currentBqlQueryClause.getClauseElements().iterator();
+                        while (groupVariablesIterator.hasNext()) {
+                            String groupVariable = groupVariablesIterator.next();
+
+                            queryStringBuilder.append("?");
+                            queryStringBuilder.append(groupVariable);
+
+                            if (groupVariablesIterator.hasNext())
+                                queryStringBuilder.append(", ");
+                        }
                         break;
+
                     case RESULT_HAVING_CLAUSE:
                         break;
+
                     case RESULT_LIMIT_CLAUSE:
+                        queryStringBuilder.append(currentBqlQueryClause.getClauseSpecificationAmount());
                         break;
 
                 }
@@ -117,6 +149,7 @@ public class BqlQuery extends AbstractQuery implements Query {
 
         }
 
+        queryStringBuilder.append(";");
 
         return queryStringBuilder.toString();
     }

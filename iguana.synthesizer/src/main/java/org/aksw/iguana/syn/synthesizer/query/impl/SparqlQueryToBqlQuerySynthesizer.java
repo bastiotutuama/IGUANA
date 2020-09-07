@@ -7,7 +7,9 @@ import org.aksw.iguana.syn.model.query.impl.BqlQuery;
 import org.aksw.iguana.syn.model.query.impl.BqlQueryClause;
 import org.aksw.iguana.syn.model.query.impl.SparqlQuery;
 import org.aksw.iguana.syn.model.query.impl.SparqlQueryClause;
+import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.aksw.iguana.syn.synthesizer.Synthesizer;
+import org.aksw.iguana.syn.synthesizer.statement.impl.RDFNtripleStatementToBadwolfStatementSythesizer;
 import org.apache.jena.query.QueryFactory;
 
 import java.io.IOException;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
+
+    private static boolean debugOutPutEnabled = true;
 
     public static void main(String[] args) {
 
@@ -52,53 +56,16 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             }
 
             if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
-                System.out.println("------------------------------------------ " + "\n");
 
-                System.out.println(sparqlQueryFromFile);
-
-                System.out.println("TYPE CLAUSE");
-                System.out.println("Keyword: " + sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE).getClauseKeyword() + "\n");
-
-
-                System.out.println("RESULT VARIABLES CLAUSE");
-                List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElements();
-                System.out.println("Result variables: " + Arrays.toString(clauseVars.toArray()));
-                System.out.println("Result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElementAggregatorExpressions() + "\n");
-
-                System.out.println("PATTERN CLAUSE");
-                System.out.println("Triples:");
-                int i = 1;
-                for (String currentQueryPatternTriple:sparqlQueryFromFile.getQueryPatternTriplesAsRdfNtriple()) {
-                    System.out.println(i + ": [" + currentQueryPatternTriple + "]");
-                    i++;
-                }
-                System.out.println();
-
-                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE) != null) {
-                    System.out.println("ORDER BY CLAUSE");
-                    QueryClause orderByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE);
-                    System.out.println(((AbstractQueryClause) orderByClause).getClauseSortConditions());
-                    System.out.println();
-                }
-
-                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE) != null) {
-                    System.out.println("GROUP BY CLAUSE");
-                    QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE);
-                    System.out.println(((AbstractQueryClause) groupByClause).getClauseElements());
-                    System.out.println();
-                }
-
-                if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE) != null) {
-                    System.out.println("LIMIT CLAUSE");
-                    QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE);
-                    System.out.println("Limit amount: " + ((AbstractQueryClause) groupByClause).getClauseSpecificationAmount());
-                    System.out.println();
-                }
-
-                System.out.println("SYNTHESIZED BQL QUERY");
                 BqlQuery synthesizedBqlQuery = synthesizeBqlQueryFromSparqlQuery(sparqlQueryFromFile, bqlTargetGraphName);
                 String bqlQueryString = synthesizedBqlQuery.getQueryAsString();
-                System.out.println(bqlQueryString);
+
+                if (debugOutPutEnabled){
+                    System.out.println(sparqlQueryFromFile);
+                    //printDebugOutputForSparqlQuery(sparqlQueryFromFile);
+                    System.out.println("SYNTHESIZED BQL QUERY");
+                    System.out.println(bqlQueryString + "\n");
+                }
 
                 allSynthesizableSparqlQueries.add(sparqlQueryFromFile);
             }
@@ -143,6 +110,50 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
         return false;
     }
 
+    private static void printDebugOutputForSparqlQuery(SparqlQuery sparqlQueryFromFile){
+        System.out.println("------------------------------------------ " + "\n");
+        System.out.println(sparqlQueryFromFile);
+
+        System.out.println("TYPE CLAUSE");
+        System.out.println("Keyword: " + sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.TYPE_CLAUSE).getClauseKeyword() + "\n");
+
+
+        System.out.println("RESULT VARIABLES CLAUSE");
+        List<String> clauseVars = ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElements();
+        System.out.println("Result variables: " + Arrays.toString(clauseVars.toArray()));
+        System.out.println("Result variable expressions: " + ((AbstractQueryClause) sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_VARIABLES_CLAUSE)).getClauseElementAggregatorExpressions() + "\n");
+
+        System.out.println("PATTERN CLAUSE");
+        System.out.println("Triples:");
+        int i = 1;
+        for (String currentQueryPatternTriple:sparqlQueryFromFile.getQueryPatternTriplesAsRdfNtripleString()) {
+            System.out.println(i + ": [" + currentQueryPatternTriple + "]");
+            i++;
+        }
+        System.out.println();
+
+        if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE) != null) {
+            System.out.println("ORDER BY CLAUSE");
+            QueryClause orderByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_ORDER_CLAUSE);
+            System.out.println(((AbstractQueryClause) orderByClause).getClauseSortConditions());
+            System.out.println();
+        }
+
+        if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE) != null) {
+            System.out.println("GROUP BY CLAUSE");
+            QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE);
+            System.out.println(((AbstractQueryClause) groupByClause).getClauseElements());
+            System.out.println();
+        }
+
+        if (sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE) != null) {
+            System.out.println("LIMIT CLAUSE");
+            QueryClause groupByClause = sparqlQueryFromFile.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE);
+            System.out.println("Limit amount: " + ((AbstractQueryClause) groupByClause).getClauseSpecificationAmount());
+            System.out.println();
+        }
+    }
+
     public static BqlQuery synthesizeBqlQueryFromSparqlQuery(SparqlQuery sparqlQuery, String sourceGraphName){
         BqlQuery bqlQuery = new BqlQuery(sparqlQuery.getQueryType());
 
@@ -166,7 +177,11 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
         //PATTERN CLAUSE
         BqlQueryClause patternClause = new BqlQueryClause(Query.QueryClauseType.PATTERN_CLAUSE);
         patternClause.setClauseKeyword("WHERE");
-        patternClause.addToClauseElements(sparqlQuery.getQueryPatternTriplesAsRdfNtriple());
+        for (RDFNtripleStatement rdfNtripleStatement:sparqlQuery.getJenaQueryPatternTripleStatements()){
+            String synthesizedBqlQueryPatternStatement = RDFNtripleStatementToBadwolfStatementSythesizer.synthesizeBadwolfStatementFromRDFStatement(rdfNtripleStatement).getCompleteStatementWithoutFullStop();
+            patternClause.addToClauseElements(synthesizedBqlQueryPatternStatement);
+        }
+        //patternClause.addToClauseElements(sparqlQuery.getQueryPatternTriplesAsRdfNtripleString());
         bqlQuery.addQueryClause(patternClause);
 
         //ORDER BY CLAUSE
@@ -182,6 +197,7 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             BqlQueryClause groupByClause = new BqlQueryClause(Query.QueryClauseType.RESULTS_GROUP_CLAUSE);
             groupByClause.setClauseKeyword("GROUP BY");
             groupByClause.addToClauseElements(((SparqlQueryClause) sparqlQuery.getQueryClauseForType(Query.QueryClauseType.RESULTS_GROUP_CLAUSE)).getClauseElements());
+            bqlQuery.addQueryClause(groupByClause);
         }
 
         //LIMIT CLAUSE
@@ -189,6 +205,7 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             BqlQueryClause limitClause = new BqlQueryClause(Query.QueryClauseType.RESULT_LIMIT_CLAUSE);
             limitClause.setClauseKeyword("LIMIT");
             limitClause.setClauseSpecificationAmount(((SparqlQueryClause) sparqlQuery.getQueryClauseForType(Query.QueryClauseType.RESULT_LIMIT_CLAUSE)).getClauseSpecificationAmount());
+            bqlQuery.addQueryClause(limitClause);
         }
 
         return bqlQuery;
