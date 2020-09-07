@@ -136,7 +136,14 @@ public class SparqlQuery extends AbstractQuery implements Query {
     }
 
     public String getQueryAsStringInOneLine() {
-        return getQueryAsString().replace("\n", "");
+        String qInOneLine = getQueryAsString();
+        qInOneLine = qInOneLine.replace("\n", " ");
+        qInOneLine = qInOneLine.replace("     ", "    ");
+        qInOneLine = qInOneLine.replace("    ", "   ");
+        qInOneLine = qInOneLine.replace("   ", "  ");
+        qInOneLine = qInOneLine.replace("  ", " ");
+        qInOneLine = qInOneLine.trim();
+        return qInOneLine;
     }
 
     private List<Element> getJenaQueryPatternElements(){
