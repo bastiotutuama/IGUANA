@@ -23,7 +23,6 @@ import java.util.function.BiConsumer;
 public class SparqlQuery extends AbstractQuery implements Query {
 
     private org.apache.jena.query.Query jenaSparqlQuery;
-    private static org.apache.jena.query.QueryType[] supportedJenaQueryTypes = {org.apache.jena.query.QueryType.SELECT, org.apache.jena.query.QueryType.CONSTRUCT};
     private List<Element> jenaQueryPatternElements;
     private List<RDFNtripleStatement> jenaQueryPatternTripleStatements = new ArrayList<>();
     private List<String> queryPatternTriplesAsRdfNtriple = new ArrayList<>();
@@ -31,7 +30,6 @@ public class SparqlQuery extends AbstractQuery implements Query {
     public SparqlQuery(org.apache.jena.query.Query jenaSparqlQuery) {
 
         this.jenaSparqlQuery = jenaSparqlQuery;
-        this.jenaQueryPatternElements = ((ElementGroup)  this.jenaSparqlQuery.getQueryPattern()).getElements();
 
         //Map Jena-QueryType to Synthesizer-Query-Type
         switch (this.jenaSparqlQuery.queryType()) {
@@ -48,76 +46,81 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 break;
         }
 
-        //TYPE CLAUSE
-        SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
-        typeClause.setClauseKeyword(jenaSparqlQuery.queryType().toString());
-        addQueryClause(typeClause);
+        if (getQueryType() != QueryType.UNSUPPORTED) {
 
-        //RESULT VARIABLES CLAUSE
-        String resultVariablesClauseString = ""; //TODO
-        SparqlQueryClause resultVariablesClause = new SparqlQueryClause(QueryClauseType.RESULT_VARIABLES_CLAUSE, resultVariablesClauseString);
-        resultVariablesClause.addToClauseElements(jenaSparqlQuery.getResultVars());
-        jenaSparqlQuery.getProject().getExprs().forEach(new BiConsumer<Var, Expr>() {
-            @Override
-            public void accept(Var variable, Expr expression) {
-                if (expression instanceof ExprAggregator){
-                    Aggregator aggregator = ((ExprAggregator) expression).getAggregator();
-                    resultVariablesClause.addToClauseElementAggregatorExpressions(variable.getVarName(), aggregator.toString());
+            this.jenaQueryPatternElements = ((ElementGroup)  this.jenaSparqlQuery.getQueryPattern()).getElements();
+
+            //TYPE CLAUSE
+            SparqlQueryClause typeClause = new SparqlQueryClause(QueryClauseType.TYPE_CLAUSE, jenaSparqlQuery.queryType().toString());
+            typeClause.setClauseKeyword(jenaSparqlQuery.queryType().toString());
+            addQueryClause(typeClause);
+
+            //RESULT VARIABLES CLAUSE
+            String resultVariablesClauseString = ""; //TODO
+            SparqlQueryClause resultVariablesClause = new SparqlQueryClause(QueryClauseType.RESULT_VARIABLES_CLAUSE, resultVariablesClauseString);
+            resultVariablesClause.addToClauseElements(jenaSparqlQuery.getResultVars());
+            jenaSparqlQuery.getProject().getExprs().forEach(new BiConsumer<Var, Expr>() {
+                @Override
+                public void accept(Var variable, Expr expression) {
+                    if (expression instanceof ExprAggregator){
+                        Aggregator aggregator = ((ExprAggregator) expression).getAggregator();
+                        resultVariablesClause.addToClauseElementAggregatorExpressions(variable.getVarName(), aggregator.toString());
+                    }
                 }
-            }
-        });
-        addQueryClause(resultVariablesClause);
+            });
+            addQueryClause(resultVariablesClause);
 
-        //PATTERN CLAUSE
-        fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
-        SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriplesAsRdfNtripleString().toArray()));
-        patternClause.setClauseKeyword("WHERE");
-        patternClause.addToClauseElements(getQueryPatternTriplesAsRdfNtripleString());
-        addQueryClause(patternClause);
+            //PATTERN CLAUSE
+            fillQueryPatternTriplePathsFromJenaQueryPatternElements(jenaQueryPatternElements);
+            SparqlQueryClause patternClause = new SparqlQueryClause(QueryClauseType.PATTERN_CLAUSE, Arrays.toString(getQueryPatternTriplesAsRdfNtripleString().toArray()));
+            patternClause.setClauseKeyword("WHERE");
+            patternClause.addToClauseElements(getQueryPatternTriplesAsRdfNtripleString());
+            addQueryClause(patternClause);
 
-        //ORDER BY CLAUSE
-        if (jenaSparqlQuery.hasOrderBy() && orderByContainsOnlySimpleDirectionExpressions()) {
-            SparqlQueryClause orderByClause = new SparqlQueryClause(QueryClauseType.RESULTS_ORDER_CLAUSE, jenaSparqlQuery.getOrderBy().toString());
-            orderByClause.setClauseKeyword("ORDER BY");
+            //ORDER BY CLAUSE
+            if (jenaSparqlQuery.hasOrderBy() && orderByContainsOnlySimpleDirectionExpressions()) {
+                SparqlQueryClause orderByClause = new SparqlQueryClause(QueryClauseType.RESULTS_ORDER_CLAUSE, jenaSparqlQuery.getOrderBy().toString());
+                orderByClause.setClauseKeyword("ORDER BY");
 
-            for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
-                QueryClause.SortOrder currentConditionSortOrder = currentSortCondition.getDirection() == -1 ? QueryClause.SortOrder.DESC : QueryClause.SortOrder.ASC;
-                orderByClause.addToClauseSortConditions(currentSortCondition.getExpression().getVarName(), currentConditionSortOrder);
-            }
-            addQueryClause(orderByClause);
-        }
-
-        //GROUP BY CLAUSE
-        if (jenaSparqlQuery.hasGroupBy() && groupByContainsOnlySimpleVariablesAsExpressions()) {
-            SparqlQueryClause groupByClause = new SparqlQueryClause(QueryClauseType.RESULTS_GROUP_CLAUSE, jenaSparqlQuery.getGroupBy().toString());
-            groupByClause.setClauseKeyword("GROUP BY");
-
-            for (Var currentGroupByVariable:jenaSparqlQuery.getGroupBy().getVars()) {
-                groupByClause.addToClauseElements(currentGroupByVariable.getVarName());
-            }
-
-            //Case of implicit group by:
-            if (jenaSparqlQuery.getGroupBy().getVars().size() == 0 && !resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression()) {
-                for (Expr jenaSparqlResultExpression:getJenaSparqlResultExpressionsList()) {
-                    Aggregator aggregator = ((ExprAggregator) jenaSparqlResultExpression).getAggregator();
-                    String implicitVarName = aggregator.getExprList().get(0).getVarName();
-                    groupByClause.addToClauseElements(implicitVarName);
-                    groupByClause.setClauseString(groupByClause.toString() + " - Implicit GROUP BY");
+                for (SortCondition currentSortCondition:jenaSparqlQuery.getOrderBy()) {
+                    QueryClause.SortOrder currentConditionSortOrder = currentSortCondition.getDirection() == -1 ? QueryClause.SortOrder.DESC : QueryClause.SortOrder.ASC;
+                    orderByClause.addToClauseSortConditions(currentSortCondition.getExpression().getVarName(), currentConditionSortOrder);
                 }
+                addQueryClause(orderByClause);
             }
-            addQueryClause(groupByClause);
-        }
 
-        //HAVING CLAUSE
-        //TODO
-        //Not yet implemented as it is currently rarely found in Benchmark-SPARQL-Query-Sets
+            //GROUP BY CLAUSE
+            if (jenaSparqlQuery.hasGroupBy() && groupByContainsOnlySimpleVariablesAsExpressions()) {
+                SparqlQueryClause groupByClause = new SparqlQueryClause(QueryClauseType.RESULTS_GROUP_CLAUSE, jenaSparqlQuery.getGroupBy().toString());
+                groupByClause.setClauseKeyword("GROUP BY");
 
-        //LIMIT CLAUSE
-        if (jenaSparqlQuery.hasLimit()) {
-            SparqlQueryClause limitClause = new SparqlQueryClause(QueryClauseType.RESULT_LIMIT_CLAUSE, "LIMIT " + jenaSparqlQuery.getLimit());
-            limitClause.setClauseKeyword("LIMIT");
-            limitClause.setClauseSpecificationAmount(jenaSparqlQuery.getLimit());
-            addQueryClause(limitClause);
+                for (Var currentGroupByVariable:jenaSparqlQuery.getGroupBy().getVars()) {
+                    groupByClause.addToClauseElements(currentGroupByVariable.getVarName());
+                }
+
+                //Case of implicit group by:
+                if (jenaSparqlQuery.getGroupBy().getVars().size() == 0 && !resultVariableExpressionsContainAnAggregatorExpressionDifferentFromCountandSumOrANonAggratorExpression()) {
+                    for (Expr jenaSparqlResultExpression:getJenaSparqlResultExpressionsList()) {
+                        Aggregator aggregator = ((ExprAggregator) jenaSparqlResultExpression).getAggregator();
+                        String implicitVarName = aggregator.getExprList().get(0).getVarName();
+                        groupByClause.addToClauseElements(implicitVarName);
+                        groupByClause.setClauseString(groupByClause.toString() + " - Implicit GROUP BY");
+                    }
+                }
+                addQueryClause(groupByClause);
+            }
+
+            //HAVING CLAUSE
+            //TODO
+            //Not yet implemented as it is currently rarely found in Benchmark-SPARQL-Query-Sets
+
+            //LIMIT CLAUSE
+            if (jenaSparqlQuery.hasLimit()) {
+                SparqlQueryClause limitClause = new SparqlQueryClause(QueryClauseType.RESULT_LIMIT_CLAUSE, "LIMIT " + jenaSparqlQuery.getLimit());
+                limitClause.setClauseKeyword("LIMIT");
+                limitClause.setClauseSpecificationAmount(jenaSparqlQuery.getLimit());
+                addQueryClause(limitClause);
+            }
         }
 
     }
@@ -130,11 +133,6 @@ public class SparqlQuery extends AbstractQuery implements Query {
     @Override
     public String getQueryAsString() {
         return jenaSparqlQuery.toString(Syntax.syntaxSPARQL_11);
-    }
-
-
-    public static org.apache.jena.query.QueryType[] getSupportedJenaQueryTypes() {
-        return supportedJenaQueryTypes;
     }
 
     private List<Element> getJenaQueryPatternElements(){

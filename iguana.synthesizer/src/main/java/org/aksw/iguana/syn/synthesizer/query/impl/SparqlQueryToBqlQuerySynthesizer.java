@@ -47,15 +47,11 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
         ArrayList<SparqlQuery> allSynthesizableSparqlQueries = new ArrayList<>();
 
         for (String currentSparqlQueryFromFileAsString:sparqlQueriesFromFileAsString) {
+
             org.apache.jena.query.Query jenaSparqlQueryFromFile = QueryFactory.create(currentSparqlQueryFromFileAsString);
-            //System.out.println(jenaSparqlQueryFromFile.serialize(Syntax.syntaxSPARQL));
+            SparqlQuery sparqlQueryFromFile = new SparqlQuery(jenaSparqlQueryFromFile);
 
-            SparqlQuery sparqlQueryFromFile = null;
-            if (jenaSparqlQueryFromFile != null && jenaSparqlQueryTypeIsSupported(jenaSparqlQueryFromFile)){
-                    sparqlQueryFromFile = new SparqlQuery(jenaSparqlQueryFromFile);
-            }
-
-            if (sparqlQueryFromFile != null && sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
+            if (sparqlQueryCanBeSynthesizedToBqlQuery(sparqlQueryFromFile)) {
 
                 BqlQuery synthesizedBqlQuery = synthesizeBqlQueryFromSparqlQuery(sparqlQueryFromFile, bqlTargetGraphName);
                 String bqlQueryString = synthesizedBqlQuery.getQueryAsString();
@@ -100,14 +96,6 @@ public class SparqlQueryToBqlQuerySynthesizer implements Synthesizer {
             return false;
 
         return true;
-    }
-
-    private static boolean jenaSparqlQueryTypeIsSupported(org.apache.jena.query.Query jenaSparqlQuery){
-        for (int i = 0; i<SparqlQuery.getSupportedJenaQueryTypes().length; i++){
-            if ( SparqlQuery.getSupportedJenaQueryTypes()[i] == jenaSparqlQuery.queryType())
-                return true;
-        }
-        return false;
     }
 
     private static void printDebugOutputForSparqlQuery(SparqlQuery sparqlQueryFromFile){
