@@ -3,12 +3,11 @@ package org.aksw.iguana.syn.model.query.impl;
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
 import org.aksw.iguana.syn.model.query.QueryClause;
-import org.apache.jena.graph.Node;
+import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.apache.jena.query.SortCondition;
 import org.apache.jena.query.Syntax;
 import org.apache.jena.sparql.core.TriplePath;
 import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.core.VarExprList;
 import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.sparql.expr.ExprAggregator;
 import org.apache.jena.sparql.expr.ExprVar;
@@ -21,12 +20,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import static org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement.getTripleNodeAsRDFNtripleNodeString;
+
 public class SparqlQuery extends AbstractQuery implements Query {
 
     private org.apache.jena.query.Query jenaSparqlQuery;
     private static org.apache.jena.query.QueryType[] supportedJenaQueryTypes = {org.apache.jena.query.QueryType.SELECT, org.apache.jena.query.QueryType.CONSTRUCT};
     private List<Element> jenaQueryPatternElements;
-    private List<TriplePath> jenaQueryPatternTriplePaths = new ArrayList<>();
+    private List<RDFNtripleStatement> jenaQueryPatternTripleStatements = new ArrayList<>();
     private List<String> queryPatternTriples = new ArrayList<>();
 
     public SparqlQuery(org.apache.jena.query.Query jenaSparqlQuery) {
@@ -152,33 +153,18 @@ public class SparqlQuery extends AbstractQuery implements Query {
                 ElementPathBlock tripleElementPathBlock = (ElementPathBlock) currentJenaQueryPatternElementPathBlock;
                 List<TriplePath> currentTriplePaths = tripleElementPathBlock.getPattern().getList();
                 for (TriplePath currentTriplePath:currentTriplePaths) {
-                    addToJenaQuerryPatternTriplePathsAndTriples(currentTriplePath);
+                    addToJenaQuerryPatternTripleStatementsAndTriples(currentTriplePath);
                 }
             }
         }
     }
 
-    private void addToJenaQuerryPatternTriplePathsAndTriples(TriplePath triplePath){
-        jenaQueryPatternTriplePaths.add(triplePath);
-        String currentTriple =
-                //Subject
-                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getSubject()) +
-                " " +
-                //Predicate
-                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getPredicate()) +
-                " " +
-                //Object
-                getUriWithBracketsOrSimpleStringFromTripleNode(triplePath.getObject());
-        queryPatternTriples.add(currentTriple);
+    private void addToJenaQuerryPatternTripleStatementsAndTriples(TriplePath triplePath){
+        RDFNtripleStatement queryPatternRdfNtripleStatement =  new RDFNtripleStatement(triplePath);
+        jenaQueryPatternTripleStatements.add(queryPatternRdfNtripleStatement);
+        queryPatternTriples.add(queryPatternRdfNtripleStatement.getCompleteStatementWithoutFullStop());
     }
 
-    private static String getUriWithBracketsOrSimpleStringFromTripleNode(Node tripleNode){
-        if (tripleNode.isURI()) {
-            return "<" + tripleNode.toString() + ">";
-        } else {
-            return tripleNode.toString();
-        }
-    }
 
     public List<String> getQueryPatternTriples() {
         return queryPatternTriples;

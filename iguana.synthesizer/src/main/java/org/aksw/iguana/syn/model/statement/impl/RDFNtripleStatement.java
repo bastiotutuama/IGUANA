@@ -1,7 +1,9 @@
 package org.aksw.iguana.syn.model.statement.impl;
 
 import org.aksw.iguana.syn.model.statement.AbstractStatement;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.sparql.core.TriplePath;
 
 public class RDFNtripleStatement extends AbstractStatement implements org.aksw.iguana.syn.model.statement.Statement {
 
@@ -11,6 +13,7 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
     private String object;
 
     public RDFNtripleStatement(Statement rdfStatment) {
+        //TODO check reuse of: getTripleNodeAsRDFNtripleNodeString(Node ...)
         this.rdfStatment = rdfStatment;
 
         this.subject = getStatementControlSymbol(StatementControlSymbol.URI_NODE_OPENING_BRACKET) + rdfStatment.getSubject().toString() + getStatementControlSymbol(StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
@@ -26,14 +29,30 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
         }
     }
 
-    public RDFNtripleStatement(String subject, String predicate, String object) {
-        this.subject = subject;
-        this.predicate = predicate;
-        this.object = object;
-    }
-
     public Statement getRdfStatment() {
         return rdfStatment;
+    }
+
+    public RDFNtripleStatement(TriplePath triplePath) {
+        this.subject = getTripleNodeAsRDFNtripleNodeString(triplePath.getSubject());
+        this.predicate = getTripleNodeAsRDFNtripleNodeString(triplePath.getPredicate());
+        this.object = getTripleNodeAsRDFNtripleNodeString(triplePath.getObject());
+    }
+
+    public static String getTripleNodeAsRDFNtripleNodeString(Node tripleNode){
+        if (tripleNode.isURI()) {
+            return getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET) + tripleNode.toString() + getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
+        } else if(tripleNode.isLiteral()) {
+            return  getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_OPENING_BRACKET)
+                    + tripleNode.getLiteral().getLexicalForm()
+                    + getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_CLOSING_BRACKET)
+                    + getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_DELIMETER)
+                    + getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_OPENING_BRACKET)
+                    + tripleNode.getLiteral().getDatatypeURI()
+                    + getStatementControlSymbol(AbstractStatement.StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
+        }else {
+            return tripleNode.toString();
+        }
     }
 
     public static String getStatementControlSymbol(StatementControlSymbol statementControlSymbol) {
@@ -162,4 +181,5 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
             return "";
         }
     }
+
 }
