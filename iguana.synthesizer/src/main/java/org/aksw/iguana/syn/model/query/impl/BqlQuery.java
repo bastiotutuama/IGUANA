@@ -130,6 +130,7 @@ public class BqlQuery extends AbstractQuery implements Query {
 
                             queryStringBuilder.append("?");
                             queryStringBuilder.append(groupVariable);
+                            queryStringBuilder.append(" ");
 
                             if (groupVariablesIterator.hasNext())
                                 queryStringBuilder.append(", ");
