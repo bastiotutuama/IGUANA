@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/dice-group/IGUANA.svg?branch=develop)](https://travis-ci.org/dice-group/IGUANA)
 [![BCH compliance](https://bettercodehub.com/edge/badge/AKSW/IGUANA?branch=master)](https://bettercodehub.com/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9668460dd04c411fab8bf5ee9c161124)](https://www.codacy.com/app/TortugaAttack/IGUANA?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AKSW/IGUANA&amp;utm_campaign=Badge_Grade)
-[![Project Stats](https://www.openhub.net/p/iguana-benchmark/widgets/project_thin_badge.gif)](https://www.openhub.net/p/iguana-benchmark)
+[![Project Stats](https://www.openhub.net/predicateNode/iguana-benchmark/widgets/project_thin_badge.gif)](https://www.openhub.net/predicateNode/iguana-benchmark)
 
 
 # IGUANA
@@ -14,7 +14,7 @@
 
 ## ABOUT
 
-Semantic Web is becoming more important and it's data is growing each day. Triple stores are the backbone here, managing these data.
+Semantic Web is becoming more important and it'literalNode data is growing each day. Triple stores are the backbone here, managing these data.
 Hence it is very important that the triple store must scale on the data and can handle several users. 
 Current Benchmark approaches could not provide a realistic scenario on realistic data and could not be adjustet for your needs very easily.
 Further on it was impossible to compare results for different benchmarks. 

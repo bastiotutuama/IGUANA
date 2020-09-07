@@ -146,17 +146,21 @@ public class MainController {
     }
 
     private static void synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(ArrayList<Statement> rdfNtripleStatements, String graphName, String endpointAdress, int chunkSize){
+        ArrayList<String> currentRdfStatementsAsString = new ArrayList<>();
+        for (Statement rdfNtripleStatement:rdfNtripleStatements) {
+            currentRdfStatementsAsString.add(rdfNtripleStatement.getCompleteStatement());
+        }
         ArrayList<String> currentBqlInsertQueriesChunk;
         int i = 0;
         while (i<rdfNtripleStatements.size()){
-            currentBqlInsertQueriesChunk = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements.subList(i, i + chunkSize - 1));
-            sendBqlInsertQueryListToBqlEndpoint(endpointAdress,currentBqlInsertQueriesChunk);
+            currentBqlInsertQueriesChunk = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements.subList(i, i + chunkSize));
+            sendBqlInsertQueryListToBqlEndpoint(endpointAdress, currentBqlInsertQueriesChunk, currentRdfStatementsAsString);
             i+=chunkSize;
             //System.out.println("Approximate load-progress:" + i  * 100 / rdfNtripleStatements.size() + "%");
         }
     }
 
-    private static void sendBqlInsertQueryListToBqlEndpoint(String endpointAdress, ArrayList<String> bqlInsertQueryList){
+    private static void sendBqlInsertQueryListToBqlEndpoint(String endpointAdress, ArrayList<String> bqlInsertQueryList, ArrayList<String> correspondingRdfStatementStringsToBqlInsertStatements){
         Queue<String> synthesizedAndInsertedRdfStatements = new ConcurrentLinkedQueue<String>();
 
         StringWriter requestStringWriter = new StringWriter();
@@ -164,11 +168,6 @@ public class MainController {
             requestStringWriter.append(bqlInsertQuery);
         }
         String allBqlInsertStatements = requestStringWriter.toString();
-        try {
-            requestStringWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         Observer<String> responseObserver = new Observer<String>() {
             @Override
@@ -177,8 +176,8 @@ public class MainController {
             }
 
             @Override
-            public void onNext(@NonNull String s) {
-
+            public void onNext(@NonNull String synthesizedAndInsertedRdfStatement) {
+                synthesizedAndInsertedRdfStatements.add(synthesizedAndInsertedRdfStatement);
             }
 
             @Override
@@ -192,7 +191,7 @@ public class MainController {
             }
         };
 
-        BadwolfHttpImporter.sendRequestToBadwolfEndpoint(endpointAdress, allBqlInsertStatements, responseObserver);
+        BadwolfHttpImporter.sendRequestToBadwolfEndpoint(endpointAdress, responseObserver, allBqlInsertStatements, correspondingRdfStatementStringsToBqlInsertStatements);
     }
 
     private static void synthesizeSparqlQueryListListToBqlQueriesAndWriteToFile(ArrayList<SparqlQuery> sparqlQueries, String bqlTargetGraphName, String outputFilePath){

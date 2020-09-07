@@ -3,7 +3,7 @@ sleep 2
 (>&2 echo "test")
 
 read query
-echo "s, p"
+echo "literalNode, predicateNode"
 echo "1, 2"
 echo "1, 2"
 echo "1, 2"

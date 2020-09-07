@@ -1,9 +1,14 @@
 package org.aksw.iguana.di.http;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.reactivex.rxjava3.core.Observer;
 import okhttp3.*;
+import org.aksw.iguana.di.model.BadwolfResponse;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class BadwolfHttpImporter {
@@ -16,7 +21,7 @@ public class BadwolfHttpImporter {
             .connectionPool(pool)
             .build();
 
-    public static void sendRequestToBadwolfEndpoint(String endpointAddress, String bqlQuery, Observer<String> responseObserver) {
+    public static void sendRequestToBadwolfEndpoint(String endpointAddress, Observer<String> responseObserver, String bqlQuery, ArrayList<String> bqlQueryElements) {
         RequestBody formBody = new FormBody.Builder()
                 .addEncoded("bqlQuery", bqlQuery)
                 .build();
@@ -46,8 +51,20 @@ public class BadwolfHttpImporter {
                         System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                     }*/
 
-                    String responseBodyString = responseBody.string();
+                    Gson gson = new Gson();
 
+                    String responseBodyString = responseBody.string();
+                    Type badwolfResponseArrayListType = new TypeToken<ArrayList<BadwolfResponse>>(){}.getType();
+                    ArrayList<BadwolfResponse> badwolfResponses = gson.fromJson(responseBodyString, badwolfResponseArrayListType);
+
+                    //Evaluate if Query was successful and notify Observer with the successful queryElement
+                    int i = 0;
+                    for (BadwolfResponse badwolfResponse:badwolfResponses) {
+                        if (badwolfResponse.getMsg().equals("[OK]")) {
+                            responseObserver.onNext(bqlQueryElements.get(i));
+                        }
+                        i++;
+                    }
                     responseObserver.onComplete();
 
                     System.out.println(responseBodyString);
