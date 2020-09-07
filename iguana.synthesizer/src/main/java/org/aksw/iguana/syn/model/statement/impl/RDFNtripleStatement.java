@@ -7,36 +7,30 @@ import org.apache.jena.sparql.core.TriplePath;
 
 public class RDFNtripleStatement extends AbstractStatement implements org.aksw.iguana.syn.model.statement.Statement {
 
-    private Statement rdfStatment;
     private String subject;
     private String predicate;
     private String object;
 
+    //private Statement rdfStatment;
+    private Node subjectNode;
+    private Node predicateNode;
+    private Node objectNode;
+
     public RDFNtripleStatement(Statement rdfStatment) {
-        //TODO check reuse of: getTripleNodeAsRDFNtripleNodeString(Node ...)
-        this.rdfStatment = rdfStatment;
-
-        this.subject = getStatementControlSymbol(StatementControlSymbol.URI_NODE_OPENING_BRACKET) + rdfStatment.getSubject().toString() + getStatementControlSymbol(StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
-
-        this.predicate = getStatementControlSymbol(StatementControlSymbol.URI_PREDICATE_OPENING_BRACKET) + rdfStatment.getPredicate().toString() + getStatementControlSymbol(StatementControlSymbol.URI_PREDICATE_CLOSING_BRACKET);
-
-        if (rdfStatment.getObject().isLiteral()) {
-            this.object = getStatementControlSymbol(StatementControlSymbol.LITERAL_OPENING_BRACKET) + rdfStatment.getObject().asLiteral().getLexicalForm() + getStatementControlSymbol(StatementControlSymbol.LITERAL_CLOSING_BRACKET)
-                    + getStatementControlSymbol(StatementControlSymbol.LITERAL_DATATYPE_DELIMETER)
-                    + getStatementControlSymbol(StatementControlSymbol.URI_NODE_OPENING_BRACKET) + rdfStatment.getObject().asLiteral().getDatatypeURI() + getStatementControlSymbol(StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
-        } else {
-            this.object = getStatementControlSymbol(StatementControlSymbol.URI_NODE_OPENING_BRACKET) + rdfStatment.getObject().toString() + getStatementControlSymbol(StatementControlSymbol.URI_NODE_CLOSING_BRACKET);
-        }
-    }
-
-    public Statement getRdfStatment() {
-        return rdfStatment;
+       this(rdfStatment.getSubject().asNode(), rdfStatment.getPredicate().asNode(), rdfStatment.getSubject().asNode());
     }
 
     public RDFNtripleStatement(TriplePath triplePath) {
-        this.subject = getTripleNodeAsRDFNtripleNodeString(triplePath.getSubject());
-        this.predicate = getTripleNodeAsRDFNtripleNodeString(triplePath.getPredicate());
-        this.object = getTripleNodeAsRDFNtripleNodeString(triplePath.getObject());
+        this(triplePath.getSubject(), triplePath.getPredicate(), triplePath.getObject());
+    }
+
+    public RDFNtripleStatement(Node subjectNode, Node predicateNode, Node objectNode) {
+        this.subjectNode = subjectNode;
+        this.predicateNode = predicateNode;
+        this.objectNode = objectNode;
+        this.subject = getTripleNodeAsRDFNtripleNodeString(subjectNode);
+        this.predicate = getTripleNodeAsRDFNtripleNodeString(predicateNode);
+        this.object = getTripleNodeAsRDFNtripleNodeString(objectNode);
     }
 
     public static String getTripleNodeAsRDFNtripleNodeString(Node tripleNode){
@@ -148,16 +142,16 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
 
 
     public boolean objectIsURINode () {
-        return rdfStatment.getObject().isURIResource();
+        return objectNode.isURI();
     }
 
     public boolean objectIsLiteral () {
-        return rdfStatment.getObject().isLiteral();
+        return objectNode.isLiteral();
     }
 
     public String getLexicalFormOfObjectLiteral() {
         if (objectIsLiteral()) {
-            return rdfStatment.getObject().asLiteral().getLexicalForm();
+            return objectNode.getLiteral().getLexicalForm();
         } else {
             return "";
         }
@@ -165,7 +159,7 @@ public class RDFNtripleStatement extends AbstractStatement implements org.aksw.i
 
     public String getObjectLiteralDatatypeURI () {
         if (objectIsLiteral()) {
-            return this.rdfStatment.getObject().asLiteral().getDatatypeURI();
+            return objectNode.getLiteral().getDatatypeURI();
         } else {
             return "";
         }
