@@ -177,7 +177,8 @@ public class RDFNtripleStatementToBadwolfStatementSythesizer implements Synthesi
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_CRLF,
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_BACKSLASH,
                             BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_DATAYPE_DELIMETER,
-                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_DOUBLE_QUOTES
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_DOUBLE_QUOTES,
+                            BadwolfStatement.IllegalStatementResourceCharacter.ILLEGAL_LITERAL_SEMICOLON
                     )
             );
             String rdfObjectLiteralContent = rdfNtripleStatement.getLexicalFormOfObjectLiteral();

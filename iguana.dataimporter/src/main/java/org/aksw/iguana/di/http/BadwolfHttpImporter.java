@@ -60,10 +60,14 @@ public class BadwolfHttpImporter {
                     //Evaluate if Query was successful and notify Observer with the successful queryElement
                     int i = 0;
                     for (BadwolfResponse badwolfResponse:badwolfResponses) {
-                        if (badwolfResponse.getMsg().equals("[OK]")) {
-                            responseObserver.onNext(bqlQueryElements.get(i));
+                        try {
+                            if (badwolfResponse.getMsg().equals("[OK]")) {
+                                responseObserver.onNext(bqlQueryElements.get(i));
+                            }
+                            i++;
+                        } catch (IndexOutOfBoundsException e){
+                            e.printStackTrace();
                         }
-                        i++;
                     }
                     responseObserver.onComplete();
 
