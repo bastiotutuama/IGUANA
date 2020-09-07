@@ -15,6 +15,8 @@ import org.aksw.iguana.syn.model.statement.impl.RDFNtripleStatement;
 import org.aksw.iguana.syn.synthesizer.statement.impl.RDFNtripleStatementToBadwolfStatementSythesizer;
 import org.aksw.iguana.syn.util.FileParser;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
@@ -78,7 +80,7 @@ public class MainController {
                 ArrayList<Statement> rdfNtripleStatements = FileParser.readInStatementsFromFile(inputFilePath, AbstractStatement.StatementLanguage.RDF_NTRIPLE);
 
                 if (outputMethod.equals("endpoint")) {
-                    synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, chunkSize);
+                    synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, chunkSize, inputFilePath);
                 } else if (outputMethod.equals("file")) {
                     synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(rdfNtripleStatements, outputFilePath);
                 } else {
@@ -145,22 +147,31 @@ public class MainController {
         writeListOfStringsToFile(synthesizedBadwolfStatements, outputFilePath);
     }
 
-    private static void synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(ArrayList<Statement> rdfNtripleStatements, String graphName, String endpointAdress, int chunkSize){
-        ArrayList<String> currentRdfStatementsAsString = new ArrayList<>();
-        for (Statement rdfNtripleStatement:rdfNtripleStatements) {
-            currentRdfStatementsAsString.add(rdfNtripleStatement.getCompleteStatement());
+    private static void synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(ArrayList<Statement> rdfNtripleStatements, String graphName, String endpointAdress, int chunkSize, String inputFilePath){
+        String outputFilePathForSynthesizedAndInsertRdfNtripleStatements = inputFilePath.replace(".nt", "_synthesized-and-inserted.nt");
+        BufferedWriter synthesizedAndInsertRdfNtripleStatementsOutputWriter = null;
+        try {
+            synthesizedAndInsertRdfNtripleStatementsOutputWriter = new BufferedWriter(new FileWriter(outputFilePathForSynthesizedAndInsertRdfNtripleStatements, true));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
         }
+
         ArrayList<String> currentBqlInsertQueriesChunk;
         int i = 0;
         while (i<rdfNtripleStatements.size()){
             currentBqlInsertQueriesChunk = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements.subList(i, i + chunkSize));
-            sendBqlInsertQueryListToBqlEndpoint(endpointAdress, currentBqlInsertQueriesChunk, currentRdfStatementsAsString);
+            ArrayList<String> currentRdfStatementsFromChunkAsString = new ArrayList<>();
+            for (Statement rdfNtripleStatement:rdfNtripleStatements.subList(i, i + chunkSize)) {
+                currentRdfStatementsFromChunkAsString.add(rdfNtripleStatement.getCompleteStatement());
+            }
+            sendBqlInsertQueryListToBqlEndpoint(endpointAdress, currentBqlInsertQueriesChunk, currentRdfStatementsFromChunkAsString, synthesizedAndInsertRdfNtripleStatementsOutputWriter);
             i+=chunkSize;
             //System.out.println("Approximate load-progress:" + i  * 100 / rdfNtripleStatements.size() + "%");
         }
     }
 
-    private static void sendBqlInsertQueryListToBqlEndpoint(String endpointAdress, ArrayList<String> bqlInsertQueryList, ArrayList<String> correspondingRdfStatementStringsToBqlInsertStatements){
+    private static void sendBqlInsertQueryListToBqlEndpoint(String endpointAdress, ArrayList<String> bqlInsertQueryList, ArrayList<String> correspondingRdfStatementStringsToBqlInsertStatements, BufferedWriter synthesizedAndInsertRdfNtripleStatementsOutputWriter){
         Queue<String> synthesizedAndInsertedRdfStatements = new ConcurrentLinkedQueue<String>();
 
         StringWriter requestStringWriter = new StringWriter();
@@ -178,6 +189,11 @@ public class MainController {
             @Override
             public void onNext(@NonNull String synthesizedAndInsertedRdfStatement) {
                 synthesizedAndInsertedRdfStatements.add(synthesizedAndInsertedRdfStatement);
+                try {
+                    synthesizedAndInsertRdfNtripleStatementsOutputWriter.write(synthesizedAndInsertedRdfStatement + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -187,7 +203,11 @@ public class MainController {
 
             @Override
             public void onComplete() {
-
+                try {
+                    synthesizedAndInsertRdfNtripleStatementsOutputWriter.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
