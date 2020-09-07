@@ -2,6 +2,8 @@ package org.aksw.iguana.syn.model.query.impl;
 
 import org.aksw.iguana.syn.model.query.AbstractQuery;
 import org.aksw.iguana.syn.model.query.Query;
+import org.aksw.iguana.syn.model.statement.AbstractStatement;
+import org.aksw.iguana.syn.model.statement.impl.BadwolfStatement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,7 +143,10 @@ public class BqlQuery extends AbstractQuery implements Query {
                         break;
 
                     case RESULT_LIMIT_CLAUSE:
+                        queryStringBuilder.append(BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_OPENING_BRACKET));
                         queryStringBuilder.append(currentBqlQueryClause.getClauseSpecificationAmount());
+                        queryStringBuilder.append(BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_CLOSING_BRACKET));
+                        queryStringBuilder.append(BadwolfStatement.getStatementControlSymbol(AbstractStatement.StatementControlSymbol.LITERAL_DATATYPE_SPECIFIER_INTEGER));
                         break;
 
                 }
