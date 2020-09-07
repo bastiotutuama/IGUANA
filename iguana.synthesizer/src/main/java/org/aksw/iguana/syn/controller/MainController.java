@@ -1,5 +1,8 @@
 package org.aksw.iguana.syn.controller;
 
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.aksw.iguana.di.http.BadwolfHttpImporter;
 import org.aksw.iguana.syn.model.query.AbstractQueryClause;
 import org.aksw.iguana.syn.model.query.Query;
@@ -21,6 +24,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.aksw.iguana.syn.synthesizer.query.impl.SparqlQueryToBqlQuerySynthesizer.sparqlQueryCanBeSynthesizedToBqlQuery;
 import static org.aksw.iguana.syn.synthesizer.query.impl.SparqlQueryToBqlQuerySynthesizer.synthesizeBqlQueryFromSparqlQuery;
@@ -152,6 +157,8 @@ public class MainController {
     }
 
     private static void sendBqlInsertQueryListToBqlEndpoint(String endpointAdress, ArrayList<String> bqlInsertQueryList){
+        Queue<String> synthesizedAndInsertedRdfStatements = new ConcurrentLinkedQueue<String>();
+
         StringWriter requestStringWriter = new StringWriter();
         for (String bqlInsertQuery:bqlInsertQueryList) {
             requestStringWriter.append(bqlInsertQuery);
@@ -162,7 +169,30 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BadwolfHttpImporter.sendRequestToBadwolfEndpoint(endpointAdress, allBqlInsertStatements);
+
+        Observer<String> responseObserver = new Observer<String>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(@NonNull String s) {
+
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
+        BadwolfHttpImporter.sendRequestToBadwolfEndpoint(endpointAdress, allBqlInsertStatements, responseObserver);
     }
 
     private static void synthesizeSparqlQueryListListToBqlQueriesAndWriteToFile(ArrayList<SparqlQuery> sparqlQueries, String bqlTargetGraphName, String outputFilePath){

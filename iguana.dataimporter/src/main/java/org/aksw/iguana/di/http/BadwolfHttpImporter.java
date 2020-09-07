@@ -1,5 +1,6 @@
 package org.aksw.iguana.di.http;
 
+import io.reactivex.rxjava3.core.Observer;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class BadwolfHttpImporter {
             .connectionPool(pool)
             .build();
 
-    public static void sendRequestToBadwolfEndpoint(String endpointAddress, String bqlQuery) {
+    public static void sendRequestToBadwolfEndpoint(String endpointAddress, String bqlQuery, Observer<String> responseObserver) {
         RequestBody formBody = new FormBody.Builder()
                 .addEncoded("bqlQuery", bqlQuery)
                 .build();
@@ -45,7 +46,11 @@ public class BadwolfHttpImporter {
                         System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                     }*/
 
-                    System.out.println(responseBody.string());
+                    String responseBodyString = responseBody.string();
+
+                    responseObserver.onComplete();
+
+                    System.out.println(responseBodyString);
                     System.out.println();
                 }
             }
@@ -53,7 +58,7 @@ public class BadwolfHttpImporter {
     }
 
     public static void main(String[] args) {
-        sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", "SELECT ?s, ?p, ?o FROM ?swdf WHERE {?s ?p ?o};");
+        //sendRequestToBadwolfEndpoint("http://131.234.29.241:1234/bql", "SELECT ?s, ?p, ?o FROM ?swdf WHERE {?s ?p ?o};");
     }
 
     public static void shutdownNetworkClient(){

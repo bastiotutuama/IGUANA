@@ -9,7 +9,7 @@ public interface Statement {
     }
 
     public enum StatementLanguage {
-        RDF_NTRIPLE("N-TRPLE"),
+        RDF_NTRIPLE("N-TRIPLE"),
         BQL_INSERT("");
 
         private final String jenaLanguageIdentifier;
