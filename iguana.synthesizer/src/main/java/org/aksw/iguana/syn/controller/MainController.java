@@ -31,7 +31,7 @@ public class MainController {
 
     private static final String defaultOutputMethod = "endpoint";
 
-    // /Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Queries/swdf_queries.txt
+    // /Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Queries/swdf_queries.sparql
     // /home/otutuama/datasets/swdfu8.nt
     private static final String defaultInputFilePath = "/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.nt";
 
@@ -86,7 +86,11 @@ public class MainController {
 
                 ArrayList<SparqlQuery> sparqlQueriesFromFile = FileParser.readInSparqlQueriesFromFile(inputFilePath);
 
-                synthesizeSparqlQueryListListToBqlQueriesAndWriteToFile(sparqlQueriesFromFile, graphName, outputFilePath);
+                if (outputMethod.equals("file")) {
+                    synthesizeSparqlQueryListListToBqlQueriesAndWriteToFile(sparqlQueriesFromFile, graphName, outputFilePath);
+                } else {
+                    System.out.println("Output-Method not recognized");
+                }
 
                 break;
 
@@ -189,7 +193,8 @@ public class MainController {
         }
 
         writeListOfStringsToFile(synthesizedBqlQueries, outputFilePath);
-        writeListOfStringsToFile(synthesizableSparqlQueries, outputFilePath.replace(".bql", "_synthesizable.sparql"));
+        String outputFilePathForSynthesizableSparqlQueries = outputFilePath.replace(".bql", "_synthesizable.sparql");
+        writeListOfStringsToFile(synthesizableSparqlQueries, outputFilePathForSynthesizableSparqlQueries);
 
         if (debugOutPutEnabled) {
             System.out.println("Number of SPARQL Queries in File: " + sparqlQueries.size());
