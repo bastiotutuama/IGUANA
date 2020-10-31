@@ -1,19 +1,16 @@
 package org.aksw.iguana.tp.query;
 
+import org.aksw.iguana.tp.tasks.impl.stresstest.worker.AbstractWorker;
+import org.aksw.iguana.tp.tasks.impl.stresstest.worker.Worker;
+import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.*;
+import org.aksw.iguana.tp.utils.QueryStatistics;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.AbstractWorker;
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.Worker;
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.CLIInputWorker;
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.CLIWorker;
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.SPARQLWorker;
-import org.aksw.iguana.tp.tasks.impl.stresstest.worker.impl.UPDATEWorker;
-import org.aksw.iguana.tp.utils.QueryStatistics;
 
 /**
  * 
@@ -56,6 +53,8 @@ public abstract class AbstractWorkerQueryHandler implements QueryHandler{
 			}
 			else if(worker instanceof UPDATEWorker) {
 				updateKeys.add(((UPDATEWorker)worker).getQueriesFileName());
+			}else if(worker instanceof BQLWorker){
+				sparqlKeys.add(((BQLWorker)worker).getQueriesFileName());
 			}
 		}
 	}
