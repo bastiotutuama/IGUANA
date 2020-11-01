@@ -9,11 +9,14 @@ import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,6 +24,8 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,12 +67,20 @@ public class BQLWorker extends AbstractWorker {
         try {
             // Execute Query
             String qEncoded = URLEncoder.encode(query);
-            String addChar = "?";
-            if (service.contains("?")) {
-                addChar = "&";
-            }
-            String url = service + addChar + "query=" + qEncoded;
-            HttpGet request = new HttpGet(url);
+
+            String url = service;
+            HttpPost request = new HttpPost(url);
+
+            // Add headers
+            //request.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+            // -> Done automatically by UrlEncodedFormEntity
+
+            // Add body
+            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            nvps.add(new BasicNameValuePair("bqlQuery", query));
+            request.setEntity(new UrlEncodedFormEntity(nvps, HTTP.DEF_CONTENT_CHARSET));
+
+
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeOut.intValue())
                     .setConnectTimeout(timeOut.intValue()).build();
 
@@ -91,7 +104,7 @@ public class BQLWorker extends AbstractWorker {
                     return new Long[] { 0L, System.currentTimeMillis() - start };
                 }
                 long size=0L;
-                if("application/sparql-results+json".equals(cType)) {
+                if("application/json".equals(cType)) {
                     size = parseJson(res.get());
                 }
                 else {
