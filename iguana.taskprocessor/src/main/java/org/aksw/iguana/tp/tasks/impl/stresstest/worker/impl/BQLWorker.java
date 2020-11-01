@@ -187,11 +187,12 @@ public class BQLWorker extends AbstractWorker {
         service2.awaitTermination(this.timeOut + 100, TimeUnit.MILLISECONDS);
     }
 
-    private long parseJson(String res) throws ParseException {
+    private long parseJson(String response) throws ParseException {
         JSONParser parser = new JSONParser();
-        JSONObject json = (JSONObject) parser.parse(res.toString().trim());
-        long size = ((JSONArray) ((JSONObject) json.get("results")).get("bindings")).size();
-        res = "";
+        JSONArray rootArray = (JSONArray) parser.parse(response.trim());
+        JSONObject responseObject = (JSONObject) rootArray.get(0);
+        long size = ((JSONArray) ((JSONObject) responseObject.get("table")).get("bindings")).size();
+        response = "";
         return size;
     }
 
