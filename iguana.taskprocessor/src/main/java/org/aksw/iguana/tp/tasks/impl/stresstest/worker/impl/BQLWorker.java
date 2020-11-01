@@ -23,7 +23,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -66,8 +65,6 @@ public class BQLWorker extends AbstractWorker {
 
         try {
             // Execute Query
-            String qEncoded = URLEncoder.encode(query);
-
             String url = service;
             HttpPost request = new HttpPost(url);
 
@@ -191,7 +188,14 @@ public class BQLWorker extends AbstractWorker {
         JSONParser parser = new JSONParser();
         JSONArray rootArray = (JSONArray) parser.parse(response.trim());
         JSONObject responseObject = (JSONObject) rootArray.get(0);
-        long size = ((JSONArray) ((JSONObject) responseObject.get("table")).get("bindings")).size();
+        JSONObject tableObject = (JSONObject) responseObject.get("table");
+        long size = 0;
+        try {
+            if(!tableObject.isEmpty())
+            size = ((JSONArray) tableObject.get("rows")).size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         response = "";
         return size;
     }
