@@ -190,12 +190,12 @@ public class BQLWorker extends AbstractWorker {
         JSONObject responseObject = (JSONObject) rootArray.get(0);
         JSONObject tableObject = (JSONObject) responseObject.get("table");
         long size = 0;
-        try {
+        //try {
             if(!tableObject.isEmpty())
             size = ((JSONArray) tableObject.get("rows")).size();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
         response = "";
         return size;
     }
