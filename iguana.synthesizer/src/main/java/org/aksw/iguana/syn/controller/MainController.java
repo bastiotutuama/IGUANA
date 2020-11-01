@@ -50,7 +50,7 @@ public class MainController {
     //"/Users/sebastian/Dropbox/Academic Education/Uni Paderborn/Bachelor Thesis/Datasets and Queries/SWDF/Dataset/swdfu8_5000.bql"
     private static final String defaultOutputFilePath = "/home/otutuama/datasets/swdfu8.bql";
 
-    private static final int defaultChunkSize = 25000;
+    private static final int defaultChunkSize = 5; //maxmium chunk-size for http POST on Badwolf: 25000
 
     private static boolean debugOutPutEnabled = true;
 
