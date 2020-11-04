@@ -94,6 +94,8 @@ public class BQLWorker extends AbstractWorker {
                 Header[] contentType = response.getHeaders("Content-Type");
                 String cType = getContentTypeVal(contentType[0]);
 
+                System.out.println("[DEBUG] Now executing: " + queryID);
+
                 executeAndTerminate(entity, res, cType);
 
                 long end = System.currentTimeMillis();
