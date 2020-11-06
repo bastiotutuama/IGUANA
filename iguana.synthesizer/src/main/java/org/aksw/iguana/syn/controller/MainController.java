@@ -82,7 +82,7 @@ public class MainController {
                 if (outputMethod.equals("endpoint")) {
                     synthesizeRdfNtripleStatmentListToBqlAndLoadToBqlEndpointAsChunks(rdfNtripleStatements, graphName, endpointAdress, chunkSize, inputFilePath);
                 } else if (outputMethod.equals("file")) {
-                    synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(rdfNtripleStatements, outputFilePath);
+                    synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(rdfNtripleStatements, graphName, outputFilePath);
                 } else {
                     System.out.println("Output-Method not recognized");
                 }
@@ -126,9 +126,9 @@ public class MainController {
         }
     }
 
-    private static void synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(ArrayList<Statement> rdfNtripleStatements, String outputFilePath){
+    private static void synthesizeRdfNtripleStatmentListToBadwolfStatementsAndWriteToFile(ArrayList<Statement> rdfNtripleStatements, String graphName, String outputFilePath){
         ArrayList<String> synthesizedBadwolfStatements = new ArrayList<>();
-        ArrayList<String> synthesizedBadwolfStatementsAsBqlInsert = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements("GRAPH_NAME", rdfNtripleStatements);
+        ArrayList<String> synthesizedBadwolfStatementsAsBqlInsert = RDFNtripleStatementToBadwolfStatementSythesizer.generateBQLInsertQueryFromRDFNtripleStatements(graphName, rdfNtripleStatements);
         for (Statement rdfNtripleStatement : rdfNtripleStatements) {
 
             if (debugOutPutEnabled) {
