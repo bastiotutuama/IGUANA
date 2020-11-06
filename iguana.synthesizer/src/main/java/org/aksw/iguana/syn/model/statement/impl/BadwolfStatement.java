@@ -120,4 +120,9 @@ public class BadwolfStatement extends AbstractStatement implements Statement {
     public String getObject() {
         return object;
     }
+
+    @Override
+    public String getCompleteStatement() {
+        return super.getCompleteStatementWithoutFullStop();
+    }
 }
